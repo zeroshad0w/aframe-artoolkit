@@ -195,6 +195,7 @@ AFRAME.registerSystem('artoolkitsystem', {
                 var arController = this.arController
 
                 if (!arController) return;
+		// - use arController.process
 
 		arController.detectMarker(this.srcElement);
 
