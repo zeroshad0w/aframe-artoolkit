@@ -167,20 +167,20 @@ AFRAME.registerSystem('artoolkitsystem', {
 
                         // TODO to remove later
 			
-			arController.setPatternDetectionMode(artoolkit.AR_TEMPLATE_MATCHING_MONO_AND_MATRIX);
+			// arController.setPatternDetectionMode(artoolkit.AR_TEMPLATE_MATCHING_MONO_AND_MATRIX);
 
-                        // // load kanji pattern
-                        // arController.loadMarker('data/patt.kanji', function(markerId) {
-                        //         var markerWidth = 1
-                        //         var markerTracker = arController.trackPatternMarkerId(markerId, markerWidth);
-                        // });
-                        // 
-                        // // load hiro pattern
-                        // arController.loadMarker('data/patt.hiro', function(markerId) {
-                        //         var markerWidth = 1
-                        //         var markerTracker = arController.trackPatternMarkerId(markerId, markerWidth);
-			// 	console.log('hiro markerTracker', markerTracker)
-                        // });
+                        // load kanji pattern
+                        arController.loadMarker('data/patt.kanji', function(markerId) {
+                                var markerWidth = 1
+                                var markerTracker = arController.trackPatternMarkerId(markerId, markerWidth);
+                        });
+                        
+                        // load hiro pattern
+                        arController.loadMarker('data/patt.hiro', function(markerId) {
+                                var markerWidth = 1
+                                var markerTracker = arController.trackPatternMarkerId(markerId, markerWidth);
+				console.log('hiro markerTracker', markerTracker)
+                        });
                         
                         onCompleted && onCompleted()
                 
@@ -195,7 +195,7 @@ AFRAME.registerSystem('artoolkitsystem', {
                 var arController = this.arController
 
                 if (!arController) return;
-console.log('tick')
+
 		arController.detectMarker(this.srcElement);
 
                 if( this.data.debug === true )	arController.debugDraw();
