@@ -196,6 +196,7 @@ AFRAME.registerSystem('artoolkitsystem', {
 
                 if (!arController) return;
 		// - use arController.process
+		// - it handle all the marker type
 
 		arController.detectMarker(this.srcElement);
 
