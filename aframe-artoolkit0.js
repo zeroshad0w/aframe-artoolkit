@@ -3,7 +3,7 @@
 //		Code Separator
 //////////////////////////////////////////////////////////////////////////////
 
-AFRAME.registerSystem('artoolkitsystem', {
+AFRAME.registerComponent('artoolkitsystem', {
 	schema: {
                 debug : {
                         type: 'boolean',
@@ -159,27 +159,24 @@ AFRAME.registerSystem('artoolkitsystem', {
                         
                         if( _this.data.debug === true )	arController.debugSetup();
 
-			var camera = _this.sceneEl.camera
+			var camera = _this.el.sceneEl.camera
                         console.log('camera is THREE.Object3D', camera)
 
                         var projectionMatrix = arController.getCameraMatrix();
                         camera.projectionMatrix.elements.set(projectionMatrix);
 
                         // TODO to remove later
-			
-			arController.setPatternDetectionMode(artoolkit.AR_TEMPLATE_MATCHING_MONO_AND_MATRIX);
-
-                        // // load kanji pattern
+                        
+                        // load kanji pattern
                         // arController.loadMarker('data/patt.kanji', function(markerId) {
                         //         var markerWidth = 1
                         //         var markerTracker = arController.trackPatternMarkerId(markerId, markerWidth);
                         // });
-                        // 
+                        
                         // // load hiro pattern
                         // arController.loadMarker('data/patt.hiro', function(markerId) {
                         //         var markerWidth = 1
                         //         var markerTracker = arController.trackPatternMarkerId(markerId, markerWidth);
-			// 	console.log('hiro markerTracker', markerTracker)
                         // });
                         
                         onCompleted && onCompleted()
@@ -191,53 +188,54 @@ AFRAME.registerSystem('artoolkitsystem', {
         //          Code Separator
         ////////////////////////////////////////////////////////////////////////////////
         
+        
+        
+        ////////////////////////////////////////////////////////////////////////////////
+        //          Code Separator
+        ////////////////////////////////////////////////////////////////////////////////
+        
         tick : function(now, delta){
                 var arController = this.arController
 
                 if (!arController) return;
-console.log('tick')
+
 		arController.detectMarker(this.srcElement);
 
                 if( this.data.debug === true )	arController.debugDraw();
 
-		// mark all markers to invisible
-		this._markerElements.forEach(function(markerElement){
-			markerElement.el.object3D.visible = false
-		})
+		if( this._markerElements.length === 0 )	return
+		var markerRoot = this._markerElements[0].el.object3D
+		// console.log(markerRoot)
+// debugger
 
 		// update markerRoot with the found markers
-		var nMarkersFound = arController.getMarkerNum();
-                // console.log('nMarkersFound', nMarkersFound)
+		var markerNum = arController.getMarkerNum();
+                console.log('markerNum', markerNum)
 
-		if( nMarkersFound === 0 )	return
-
-		// var i = 0
-		for( var markerIndex = 0; markerIndex < nMarkersFound; markerIndex++){
-			var markerInfo = arController.getMarker(markerIndex)
-			// console.dir(markerInfo)
-			// console.log('markerInfo.id', markerInfo.id)
-			
-			var markerElement = this._markerElements.find(function(markerElement){
-				if( markerElement.data.type === 'any' )	return true
-				return markerElement.markerId === markerInfo.id ? true : false
-			})
-			if( markerElement === undefined )	continue
-			// console.log(markerElement)
-			// var markerElement = this._markerElements[0]
-			var markerRoot = markerElement.el.object3D
-			// console.log(markerRoot)
-
+		this._markerElements.forEach(function(markerElement){
+			markerElement.el.object3d.visible = false
+		})
+		
+		for()
+		
+                // return
+		if (markerNum > 0) {
 			// debugger
 			// if( markerRoot.visible === false ) {
-				arController.getTransMatSquare(markerIndex /* Marker index */, 1 /* Marker width */, markerRoot.userData.markerMatrix);
+				arController.getTransMatSquare(0 /* Marker index */, 1 /* Marker width */, markerRoot.userData.markerMatrix);
 			// } else {
-				// arController.getTransMatSquareCont(markerIndex, 1, markerRoot.userData.markerMatrix, markerRoot.userData.markerMatrix);
+				// arController.getTransMatSquareCont(0, 1, markerRoot.userData.markerMatrix, markerRoot.userData.markerMatrix);
 			// }
 			arController.transMatToGLMat(markerRoot.userData.markerMatrix, markerRoot.matrix.elements);
-			markerRoot.visible = true			
+		}
+                
+		// objects visible IIF there is a marker
+		if (markerNum > 0) {
+			markerRoot.visible = true;
+		} else {
+			markerRoot.visible = false;
 		}
         },
-
 	////////////////////////////////////////////////////////////////////////////////
 	//          Code Separator
 	////////////////////////////////////////////////////////////////////////////////
@@ -263,14 +261,9 @@ AFRAME.registerComponent('artoolkitmarker', {
 		size: {
 			type: 'number',
 			value: 1
-		},
-		type: {
-			type: 'string',
-			default: 'any'
 		}
 	},
 	init: function () {
-		var _this = this
                 // debugger;
                 var artoolkitsystem = this.el.components.artoolkitsystem
                 // if( artoolkitsystem === undefined ) return
@@ -282,22 +275,10 @@ AFRAME.registerComponent('artoolkitmarker', {
         	markerRoot.matrixAutoUpdate = false;
         	markerRoot.visible = false
 
-		var artoolkitsystem = this.el.sceneEl.systems.artoolkitsystem
-		var arController = artoolkitsystem.arController
+		var artoolkitsystem = this.el.components.artoolkitsystem
 		artoolkitsystem.addMarker(this)
 
                 console.log('artoolkit', artoolkitsystem)
-		
-		if( this.data.type === 'kanji' ){
-			this.markerId = 0
-		}else if( this.data.type === 'hiro' ){
-			this.markerId = 1
-		}else if( this.data.type === 'any' ){
-			this.markerId = -1
-		}else{
-			console.assert(false)
-		}
-		
 	},
 	remove : function(){
 		var artoolkitsystem = this.el.components.artoolkitsystem

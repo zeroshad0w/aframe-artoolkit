@@ -228,6 +228,7 @@
 			var projectionMatrix = arController.getCameraMatrix();
 			camera.projectionMatrix.elements.set(projectionMatrix);
 			
+			arController.setPatternDetectionMode(artoolkit.AR_TEMPLATE_MATCHING_MONO_AND_MATRIX);
 			// load kanji pattern
 			arController.loadMarker('Data/patt.kanji', function(markerId) {
 				var markerWidth = 1

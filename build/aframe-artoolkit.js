@@ -3,7 +3,7 @@
 //		Code Separator
 //////////////////////////////////////////////////////////////////////////////
 
-AFRAME.registerComponent('artoolkit', {
+AFRAME.registerSystem('artoolkitsystem', {
 	schema: {
                 debug : {
                         type: 'boolean',
@@ -12,6 +12,9 @@ AFRAME.registerComponent('artoolkit', {
                 sourceType : {
                         type: 'string',
                         default: 'webcam'                        
+                },
+                sourceUrl : {
+                        type: 'string',
                 }
 	},
 	init: function () {
@@ -20,7 +23,7 @@ AFRAME.registerComponent('artoolkit', {
                 this.srcElement = null
                 this.arController = null;
                 this.cameraParameters = null
-                
+		this._markerElements = []
                 this._initSource(function onReady(width, height){
                         console.log('ready')
                         _this._onSourceReady(width, height, function onCompleted(){
@@ -59,6 +62,7 @@ AFRAME.registerComponent('artoolkit', {
         _initSourceImage: function(onReady){
                 var srcElement = document.createElement('img')
 		document.body.appendChild(srcElement)
+		srcElement.src = this.data.sourceUrl
 		srcElement.src = './images/armchair.jpg'
 		// srcElement.src = './images/chalk.jpg'
 		// srcElement.src = './images/chalk_multi.jpg'
@@ -76,6 +80,7 @@ AFRAME.registerComponent('artoolkit', {
 		var srcElement = document.createElement('video');
 		document.body.appendChild(srcElement)
 		// srcElement.src = 'videos/output_4.mp4';
+		srcElement.src = this.data.sourceUrl
 		srcElement.src = 'videos/headtracking.mp4';
 		srcElement.autoplay = true;
 		srcElement.webkitPlaysinline = true;
@@ -146,7 +151,7 @@ AFRAME.registerComponent('artoolkit', {
         
         _onSourceReady: function(width, height, onCompleted){
                 var _this = this
-                console.log(arguments)
+                console.log('width', width, 'height', height)
                 _this.cameraParameters = new ARCameraParam('data/camera_para.dat', function() {
                 
                         var arController = new ARController(width, height, _this.cameraParameters);
@@ -154,25 +159,28 @@ AFRAME.registerComponent('artoolkit', {
                         
                         if( _this.data.debug === true )	arController.debugSetup();
 
-			var camera = _this.el.sceneEl.camera
+			var camera = _this.sceneEl.camera
                         console.log('camera is THREE.Object3D', camera)
 
                         var projectionMatrix = arController.getCameraMatrix();
                         camera.projectionMatrix.elements.set(projectionMatrix);
 
                         // TODO to remove later
-                        
-                        // load kanji pattern
-                        arController.loadMarker('data/patt.kanji', function(markerId) {
-                                var markerWidth = 1
-                                var markerTracker = arController.trackPatternMarkerId(markerId, markerWidth);
-                        });
-                        
-                        // load hiro pattern
-                        arController.loadMarker('data/patt.hiro', function(markerId) {
-                                var markerWidth = 1
-                                var markerTracker = arController.trackPatternMarkerId(markerId, markerWidth);
-                        });
+			
+			arController.setPatternDetectionMode(artoolkit.AR_TEMPLATE_MATCHING_MONO_AND_MATRIX);
+
+                        // // load kanji pattern
+                        // arController.loadMarker('data/patt.kanji', function(markerId) {
+                        //         var markerWidth = 1
+                        //         var markerTracker = arController.trackPatternMarkerId(markerId, markerWidth);
+                        // });
+                        // 
+                        // // load hiro pattern
+                        // arController.loadMarker('data/patt.hiro', function(markerId) {
+                        //         var markerWidth = 1
+                        //         var markerTracker = arController.trackPatternMarkerId(markerId, markerWidth);
+			// 	console.log('hiro markerTracker', markerTracker)
+                        // });
                         
                         onCompleted && onCompleted()
                 
@@ -183,45 +191,66 @@ AFRAME.registerComponent('artoolkit', {
         //          Code Separator
         ////////////////////////////////////////////////////////////////////////////////
         
-        
-        
-        ////////////////////////////////////////////////////////////////////////////////
-        //          Code Separator
-        ////////////////////////////////////////////////////////////////////////////////
-        
         tick : function(now, delta){
                 var arController = this.arController
 
                 if (!arController) return;
-
+console.log('tick')
 		arController.detectMarker(this.srcElement);
 
                 if( this.data.debug === true )	arController.debugDraw();
 
-                var markerRoot = document.querySelector('[artoolkitmarker]').object3D
-		if( markerRoot === null )	return
-// debugger
+		// mark all markers to invisible
+		this._markerElements.forEach(function(markerElement){
+			markerElement.el.object3D.visible = false
+		})
 
 		// update markerRoot with the found markers
-		var markerNum = arController.getMarkerNum();
-                // console.log('markerNum', markerNum)
-                // return
-		if (markerNum > 0) {
+		var nMarkersFound = arController.getMarkerNum();
+                // console.log('nMarkersFound', nMarkersFound)
+
+		if( nMarkersFound === 0 )	return
+
+		// var i = 0
+		for( var markerIndex = 0; markerIndex < nMarkersFound; markerIndex++){
+			var markerInfo = arController.getMarker(markerIndex)
+			// console.dir(markerInfo)
+			// console.log('markerInfo.id', markerInfo.id)
+			
+			var markerElement = this._markerElements.find(function(markerElement){
+				if( markerElement.data.type === 'any' )	return true
+				return markerElement.markerId === markerInfo.id ? true : false
+			})
+			if( markerElement === undefined )	continue
+			// console.log(markerElement)
+			// var markerElement = this._markerElements[0]
+			var markerRoot = markerElement.el.object3D
+			// console.log(markerRoot)
+
+			// debugger
 			// if( markerRoot.visible === false ) {
-				arController.getTransMatSquare(0 /* Marker index */, 1 /* Marker width */, markerRoot.userData.markerMatrix);
+				arController.getTransMatSquare(markerIndex /* Marker index */, 1 /* Marker width */, markerRoot.userData.markerMatrix);
 			// } else {
-				// arController.getTransMatSquareCont(0, 1, markerRoot.userData.markerMatrix, markerRoot.userData.markerMatrix);
+				// arController.getTransMatSquareCont(markerIndex, 1, markerRoot.userData.markerMatrix, markerRoot.userData.markerMatrix);
 			// }
 			arController.transMatToGLMat(markerRoot.userData.markerMatrix, markerRoot.matrix.elements);
+			markerRoot.visible = true			
 		}
-                
-		// objects visible IIF there is a marker
-		if (markerNum > 0) {
-			markerRoot.visible = true;
-		} else {
-			markerRoot.visible = false;
-		}
-        }
+        },
+
+	////////////////////////////////////////////////////////////////////////////////
+	//          Code Separator
+	////////////////////////////////////////////////////////////////////////////////
+	addMarker : function(markerElement){
+		console.log('add marker for', markerElement)	
+		this._markerElements.push(markerElement)	
+	},
+	removeMarker : function(markerElement){
+		console.log('remove marker for', markerElement)
+		var index = this.markerElements.indexOf(markerElement);
+		console.assert(index !== index )
+		this._markerElements.splice(index, 1)
+	}
 
 });
 
@@ -229,17 +258,22 @@ AFRAME.registerComponent('artoolkit', {
 //		Code Separator
 //////////////////////////////////////////////////////////////////////////////
 AFRAME.registerComponent('artoolkitmarker', {
-        dependencies: ['artoolkit'],
+        dependencies: ['artoolkitsystem'],
 	schema: {
 		size: {
 			type: 'number',
 			value: 1
+		},
+		type: {
+			type: 'string',
+			default: 'any'
 		}
 	},
 	init: function () {
+		var _this = this
                 // debugger;
-                var artoolkit = this.el.components.artoolkit
-                if( artoolkit === undefined ) return
+                var artoolkitsystem = this.el.components.artoolkitsystem
+                // if( artoolkitsystem === undefined ) return
 
                 // create the marker Root
         	var markerRoot = this.el.object3D;
@@ -248,7 +282,26 @@ AFRAME.registerComponent('artoolkitmarker', {
         	markerRoot.matrixAutoUpdate = false;
         	markerRoot.visible = false
 
-                console.log('artoolkit', artoolkit)
+		var artoolkitsystem = this.el.sceneEl.systems.artoolkitsystem
+		var arController = artoolkitsystem.arController
+		artoolkitsystem.addMarker(this)
+
+                console.log('artoolkit', artoolkitsystem)
+		
+		if( this.data.type === 'kanji' ){
+			this.markerId = 0
+		}else if( this.data.type === 'hiro' ){
+			this.markerId = 1
+		}else if( this.data.type === 'any' ){
+			this.markerId = -1
+		}else{
+			console.assert(false)
+		}
+		
+	},
+	remove : function(){
+		var artoolkitsystem = this.el.components.artoolkitsystem
+		artoolkitsystem.removeMarker(this)
 	},
 	tick : function(now, delta){
 	},

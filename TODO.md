@@ -3,3 +3,7 @@
   - video with a URL (somewhere in asset?)
   - webcam
 - put the artoolkit in a-scene
+- import hatsune miku
+- in jsartoolkit there is more on the barcode stuff
+  - http://127.0.0.1:3000/examples/pattern_and_barcode_threejs.html
+  - parse it and import it here

@@ -7,12 +7,25 @@
 <!-- aframe-artoolkit -->
 <script src="../aframe-artoolkit.js"></script>
 <body>
-	<a-scene>		
-		<a-entity artoolkit='sourceType: image;' artoolkitmarker>
-			<!-- <a-box depth="0.01" height="1" width="1" position='0 0 0'></a-cylinder> -->
-			<a-box depth="1" height="1" width="1" position='0 0 0.5' material='opacity: 0.5; side:double'></a-box>
+	<a-scene artoolkitsystem>		
+		<!-- <a-entity artoolkitmarker='type: any'>
+			<a-box depth="1" height="1" width="1" position='0 0 0.5' material='opacity: 0.5; side:double; color:blue;'></a-box>
 			<a-entity geometry="primitive: torusKnot; radius: 0.3; radiusTubular: 0.05" position='0 0 0.5'>
 				<a-animation attribute="rotation" from="0 0 0" to="360 0 0" dur="5000" easing='linear' repeat="indefinite"></a-animation>
+			</a-entity>
+		</a-entity> -->
+
+		<a-entity artoolkitmarker='type: hiro'>
+			<a-box depth="1" height="1" width="1" position='0 0 0.5' material='opacity: 0.5; side:double; color:red;'></a-box>
+			<a-entity geometry="primitive: torusKnot; radius: 0.3; radiusTubular: 0.05" position='0 0 0.5'>
+				<a-animation attribute="rotation" from="0 0 0" to="360 0 0" dur="5000" easing='linear' repeat="indefinite"></a-animation>
+			</a-entity>
+		</a-entity>
+
+		<a-entity artoolkitmarker='type: kanji'>
+			<a-box depth="1" height="1" width="1" position='0 0 0.5' material='opacity: 0.5; side:double; color:green;'></a-box>
+			<a-entity geometry="primitive: torusKnot; radius: 0.3; radiusTubular: 0.05" position='0 0 0.5'>
+				<a-animation attribute="rotation" from="0 0 0" to="360 0 0" dur="1000" easing='linear' repeat="indefinite"></a-animation>
 			</a-entity>
 		</a-entity>
 
