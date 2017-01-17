@@ -154,11 +154,8 @@ AFRAME.registerComponent('artoolkit', {
                         
                         if( _this.data.debug === true )	arController.debugSetup();
 
-                        // TODO fix this!!!
-                        var cameraElement = document.querySelector('a-entity[camera]');
-                        var camera = cameraElement.object3D.children[0]
+			var camera = _this.el.sceneEl.camera
                         console.log('camera is THREE.Object3D', camera)
-                                                
 
                         var projectionMatrix = arController.getCameraMatrix();
                         camera.projectionMatrix.elements.set(projectionMatrix);
@@ -166,13 +163,13 @@ AFRAME.registerComponent('artoolkit', {
                         // TODO to remove later
                         
                         // load kanji pattern
-                        arController.loadMarker('Data/patt.kanji', function(markerId) {
+                        arController.loadMarker('data/patt.kanji', function(markerId) {
                                 var markerWidth = 1
                                 var markerTracker = arController.trackPatternMarkerId(markerId, markerWidth);
                         });
                         
                         // load hiro pattern
-                        arController.loadMarker('Data/patt.hiro', function(markerId) {
+                        arController.loadMarker('data/patt.hiro', function(markerId) {
                                 var markerWidth = 1
                                 var markerTracker = arController.trackPatternMarkerId(markerId, markerWidth);
                         });
@@ -202,6 +199,7 @@ AFRAME.registerComponent('artoolkit', {
                 if( this.data.debug === true )	arController.debugDraw();
 
                 var markerRoot = document.querySelector('[artoolkitmarker]').object3D
+		if( markerRoot === null )	return
 // debugger
 
 		// update markerRoot with the found markers
@@ -233,8 +231,10 @@ AFRAME.registerComponent('artoolkit', {
 AFRAME.registerComponent('artoolkitmarker', {
         dependencies: ['artoolkit'],
 	schema: {
-		type: 'string',
-		default : 'yes',
+		size: {
+			type: 'number',
+			value: 1
+		}
 	},
 	init: function () {
                 // debugger;
@@ -242,7 +242,6 @@ AFRAME.registerComponent('artoolkitmarker', {
                 if( artoolkit === undefined ) return
 
                 // create the marker Root
-                // debugger
         	var markerRoot = this.el.object3D;
         	markerRoot.name = 'Marker Root'
         	markerRoot.userData.markerMatrix = new Float64Array(12);
@@ -250,15 +249,11 @@ AFRAME.registerComponent('artoolkitmarker', {
         	markerRoot.visible = false
 
                 console.log('artoolkit', artoolkit)
-
-                // console.dir(this)
-                // var artoolkitComponents = this.el.sceneEl.components.artoolkit
-                
-                // debugger;
-                // this.
 	},
 	tick : function(now, delta){
 	},
 	update: function () {
+        	var markerRoot = this.el.object3D;
+        	markerRoot.userData.size = this.data.size;
 	},
 });
