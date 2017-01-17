@@ -1,178 +1,264 @@
 //////////////////////////////////////////////////////////////////////////////
-//                Code Separator
-//////////////////////////////////////////////////////////////////////////////
-
-AFRAME.registerPrimitive('a-minecraft', AFRAME.utils.extendDeep({}, AFRAME.primitives.getMeshMixin(), {
-        defaultComponents: {
-                minecraft: {},
-                'minecraft-head-anim': 'still',
-                'minecraft-body-anim': 'stand',
-                'minecraft-nickname': 'John',
-                'minecraft-bubble': '',
-                'minecraft-controls': {},
-        },
-        mappings: {
-                'head-anim': 'minecraft-head-anim',
-                'body-anim': 'minecraft-body-anim',
-                'nickname': 'minecraft-nickname',
-                'bubble': 'minecraft-bubble',
-                'controls': 'minecraft-controls',
-        }
-}));
-
 //////////////////////////////////////////////////////////////////////////////
 //		Code Separator
 //////////////////////////////////////////////////////////////////////////////
 
-AFRAME.registerComponent('minecraft', {
+AFRAME.registerComponent('artoolkit', {
 	schema: {
-		skinUrl: {
-			type: 'string',
-			default : ''
-		},
-		wellKnownSkin: {
-			type: 'string',
-			default : ''
-		},
-		heightMeter : {
-			default : 1.6
-		}
+                debug : {
+                        type: 'boolean',
+                        default: true
+                },
+                sourceType : {
+                        type: 'string',
+                        default: 'webcam'                        
+                }
 	},
 	init: function () {
-		var character	= new THREEx.MinecraftChar()
-		this.character = character
-
-		this.el.object3D.add( character.root )
-		// this.el.setObject3D('superRoot', character.root);
+                console.log('init system artoolkit')
+                var _this = this
+                this.srcElement = null
+                this.arController = null;
+                this.cameraParameters = null
+                
+                this._initSource(function onReady(width, height){
+                        console.log('ready')
+                        _this._onSourceReady(width, height, function onCompleted(){
+                                console.log('completed')
+                        })
+                })
 	},
-	update: function () {
-                if( Object.keys(this.data).length === 0 )       return
-		var character = this.character
-		character.root.scale.set(1,1,1).multiplyScalar(this.data.heightMeter)
-		
-		if( this.data.skinUrl ){
-			character.loadSkin(this.data.skinUrl)
-		}else if( this.data.wellKnownSkin ){
-			character.loadWellKnownSkin(this.data.wellKnownSkin)
+        
+        
+        ////////////////////////////////////////////////////////////////////////////////
+        //          Code Separator
+        ////////////////////////////////////////////////////////////////////////////////
+        
+        
+        _initSource: function(onReady){
+                if( this.data.sourceType === 'image' ){
+                        var srcElement = this._initSourceImage(function(){
+                                onReady(srcElement.width, srcElement.height)
+                        })                        
+                }else if( this.data.sourceType === 'video' ){
+                        var srcElement = this._initSourceVideo(function(){
+                                onReady(srcElement.width, srcElement.height)
+                        })                        
+                }else if( this.data.sourceType === 'webcam' ){
+                        var srcElement = this._initSourceWebcam(function(){
+                                onReady(srcElement.videoWidth, srcElement.videoHeight)
+                        })                        
+                }else{
+                        console.assert(false)
+                }
+                this.srcElement = srcElement
+                this.srcElement.style.position = 'absolute'
+                this.srcElement.style.top = '0px'
+                this.srcElement.style.zIndex = '-1'
+        },
+        _initSourceImage: function(onReady){
+                var srcElement = document.createElement('img')
+		document.body.appendChild(srcElement)
+		srcElement.src = './images/armchair.jpg'
+		// srcElement.src = './images/chalk.jpg'
+		// srcElement.src = './images/chalk_multi.jpg'
+		// srcElement.src = './images/kuva.jpg'
+		// srcElement.src = './images/img.jpg'
+		srcElement.width = 640
+		srcElement.height = 480
+
+		setTimeout(function(){
+			onReady && onReady()
+		}, 0)
+		return srcElement                
+        },
+        _initSourceVideo: function(onReady){
+		var srcElement = document.createElement('video');
+		document.body.appendChild(srcElement)
+		// srcElement.src = 'videos/output_4.mp4';
+		srcElement.src = 'videos/headtracking.mp4';
+		srcElement.autoplay = true;
+		srcElement.webkitPlaysinline = true;
+		srcElement.controls = false;
+		srcElement.loop = true;
+		srcElement.width = 640;
+		srcElement.height = 480;
+		setTimeout(function(){
+			onReady && onReady()
+		}, 0)
+		return srcElement
+	},
+        _initSourceWebcam: function(onReady){
+		navigator.getUserMedia  = navigator.getUserMedia || navigator.webkitGetUserMedia || navigator.mozGetUserMedia || navigator.msGetUserMedia;
+
+		var srcElement = document.createElement('video');
+		document.body.appendChild(srcElement);
+
+		if (navigator.getUserMedia == false )	console.log("navigator.getUserMedia not present in your browser");
+
+	        // get the media sources
+	        MediaStreamTrack.getSources(function(sourceInfos) {
+	                // define getUserMedia() constraints
+	                var constraints = {
+				audio: false,
+				video: {
+					mandatory: {
+						maxWidth: 640,
+						maxHeight: 480
+			    		}
+			  	}
+	                }
+
+	                // it it finds the videoSource 'environment', modify constraints.video
+	                for (var i = 0; i != sourceInfos.length; ++i) {
+	                        var sourceInfo = sourceInfos[i];
+	                        if(sourceInfo.kind == "video" && sourceInfo.facing == "environment") {
+	                                constraints.video.optional = [{sourceId: sourceInfo.id}]
+	                        }
+	                }
+			navigator.getUserMedia(constraints, function success(stream) {
+				console.log('success', stream);
+				srcElement.src = window.URL.createObjectURL(stream);
+				// to start the video, when it is possible to start it only on userevent. like in android
+				document.body.addEventListener('click', function(){
+					srcElement.play();
+				})
+				srcElement.play();
+			
+				// wait until the video stream is ready
+				var interval = setInterval(function() {
+					if (!srcElement.videoWidth)	return;
+					onReady()
+					clearInterval(interval)
+				}, 1000/100);
+			}, function(error) {
+				console.log("Can't access user media", error);
+				alert("Can't access user media :()");
+			});
+		})
+
+		return srcElement
+	},
+        
+        ////////////////////////////////////////////////////////////////////////////////
+        //          Code Separator
+        ////////////////////////////////////////////////////////////////////////////////
+        
+        _onSourceReady: function(width, height, onCompleted){
+                var _this = this
+                console.log(arguments)
+                _this.cameraParameters = new ARCameraParam('data/camera_para.dat', function() {
+                
+                        var arController = new ARController(width, height, _this.cameraParameters);
+                        _this.arController = arController
+                        
+                        if( _this.data.debug === true )	arController.debugSetup();
+
+                        // TODO fix this!!!
+                        var cameraElement = document.querySelector('a-entity[camera]');
+                        var camera = cameraElement.object3D.children[0]
+                        console.log('camera is THREE.Object3D', camera)
+                                                
+
+                        var projectionMatrix = arController.getCameraMatrix();
+                        camera.projectionMatrix.elements.set(projectionMatrix);
+
+                        // TODO to remove later
+                        
+                        // load kanji pattern
+                        arController.loadMarker('Data/patt.kanji', function(markerId) {
+                                var markerWidth = 1
+                                var markerTracker = arController.trackPatternMarkerId(markerId, markerWidth);
+                        });
+                        
+                        // load hiro pattern
+                        arController.loadMarker('Data/patt.hiro', function(markerId) {
+                                var markerWidth = 1
+                                var markerTracker = arController.trackPatternMarkerId(markerId, markerWidth);
+                        });
+                        
+                        onCompleted && onCompleted()
+                
+                })		
+        },
+        
+        ////////////////////////////////////////////////////////////////////////////////
+        //          Code Separator
+        ////////////////////////////////////////////////////////////////////////////////
+        
+        
+        
+        ////////////////////////////////////////////////////////////////////////////////
+        //          Code Separator
+        ////////////////////////////////////////////////////////////////////////////////
+        
+        tick : function(now, delta){
+                var arController = this.arController
+
+                if (!arController) return;
+
+		arController.detectMarker(this.srcElement);
+
+                if( this.data.debug === true )	arController.debugDraw();
+
+                var markerRoot = document.querySelector('[artoolkitmarker]').object3D
+// debugger
+
+		// update markerRoot with the found markers
+		var markerNum = arController.getMarkerNum();
+                // console.log('markerNum', markerNum)
+                // return
+		if (markerNum > 0) {
+			// if( markerRoot.visible === false ) {
+				arController.getTransMatSquare(0 /* Marker index */, 1 /* Marker width */, markerRoot.userData.markerMatrix);
+			// } else {
+				// arController.getTransMatSquareCont(0, 1, markerRoot.userData.markerMatrix, markerRoot.userData.markerMatrix);
+			// }
+			arController.transMatToGLMat(markerRoot.userData.markerMatrix, markerRoot.matrix.elements);
 		}
-	},
-});
+                
+		// objects visible IIF there is a marker
+		if (markerNum > 0) {
+			markerRoot.visible = true;
+		} else {
+			markerRoot.visible = false;
+		}
+        }
 
+});
 
 //////////////////////////////////////////////////////////////////////////////
 //		Code Separator
 //////////////////////////////////////////////////////////////////////////////
-AFRAME.registerComponent('minecraft-head-anim', {
+AFRAME.registerComponent('artoolkitmarker', {
+        dependencies: ['artoolkit'],
 	schema: {
 		type: 'string',
 		default : 'yes',
 	},
 	init: function () {
-		var character = this.el.components.minecraft.character
-		this.headAnims	= new THREEx.MinecraftCharHeadAnimations(character);
+                // debugger;
+                var artoolkit = this.el.components.artoolkit
+                if( artoolkit === undefined ) return
+
+                // create the marker Root
+                // debugger
+        	var markerRoot = this.el.object3D;
+        	markerRoot.name = 'Marker Root'
+        	markerRoot.userData.markerMatrix = new Float64Array(12);
+        	markerRoot.matrixAutoUpdate = false;
+        	markerRoot.visible = false
+
+                console.log('artoolkit', artoolkit)
+
+                // console.dir(this)
+                // var artoolkitComponents = this.el.sceneEl.components.artoolkit
+                
+                // debugger;
+                // this.
 	},
 	tick : function(now, delta){
-		this.headAnims.update(delta/1000,now/1000)
 	},
 	update: function () {
-                if( Object.keys(this.data).length === 0 )       return
-		console.assert( this.headAnims.names().indexOf(this.data) !== -1 )
-		this.headAnims.start(this.data);			
-	},
-});
-
-//////////////////////////////////////////////////////////////////////////////
-//		Code Separator
-//////////////////////////////////////////////////////////////////////////////
-
-AFRAME.registerComponent('minecraft-body-anim', {
-	schema: {
-		type: 'string',
-		default : 'wave',
-	},
-	init: function () {
-		var character = this.el.components.minecraft.character
-		this.bodyAnims	= new THREEx.MinecraftCharBodyAnimations(character);
-	},
-	tick : function(now, delta){
-                // force the animation according to controls
-                var minecraftControls = this.el.components['minecraft-controls']
-                if( minecraftControls ){
-                        var input = minecraftControls.controls.input
-                        if( input.up || input.down ){
-                                this.bodyAnims.start('run');			
-                        }else if( input.strafeLeft || input.strafeRight ){
-                                this.bodyAnims.start('strafe');
-                        }else {
-                                this.bodyAnims.start('stand');			
-                        }        
-                }
-                // update the animation
-		this.bodyAnims.update(delta/1000,now/1000)
-	},
-	update: function () {
-                if( Object.keys(this.data).length === 0 )       return
-		console.assert( this.bodyAnims.names().indexOf(this.data) !== -1 )
-		this.bodyAnims.start(this.data);
-	},
-});
-
-
-//////////////////////////////////////////////////////////////////////////////
-//		Code Separator
-//////////////////////////////////////////////////////////////////////////////
-
-AFRAME.registerComponent('minecraft-nickname', {
-	schema: {
-		type: 'string',
-		default : 'Joe',
-	},
-	init: function () {
-		var character = this.el.components.minecraft.character
-		this.nickName	= new THREEx.MinecraftNickname(character);
-	},
-	update: function () {
-                if( Object.keys(this.data).length === 0 )       return
-		this.nickName.set(this.data);
-	},
-});
-
-//////////////////////////////////////////////////////////////////////////////
-//		Code Separator
-//////////////////////////////////////////////////////////////////////////////
-
-AFRAME.registerComponent('minecraft-bubble', {
-	schema: {
-		type: 'string',
-		default : 'Hello world.',
-	},
-	init: function () {
-		var character = this.el.components.minecraft.character
-		this.bubble	= new THREEx.MinecraftBubble(character);
-	},
-        update: function () {
-                if( Object.keys(this.data).length === 0 )       return
-		this.bubble.set(this.data);
-	},
-        tick : function(now, delta){
-                this.bubble.update(delta/1000,now/1000)
-	},
-});
-
-
-//////////////////////////////////////////////////////////////////////////////
-//		Code Separator
-//////////////////////////////////////////////////////////////////////////////
-
-AFRAME.registerComponent('minecraft-controls', {
-	schema: {
-	},
-	init: function () {
-		var character = this.el.components.minecraft.character
-		this.controls	= new THREEx.MinecraftControls(character)
-                THREEx.MinecraftControls.setKeyboardInput(this.controls, ['wasd', 'arrows', 'ijkl'])
-	},
-        tick : function(now, delta){
-                this.controls.update(delta/1000,now/1000)
 	},
 });
