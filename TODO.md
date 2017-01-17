@@ -1,0 +1,5 @@
+- make image source more tunable
+  - image with a URL (somewhere in asset?)
+  - video with a URL (somewhere in asset?)
+  - webcam
+- put the artoolkit in a-scene

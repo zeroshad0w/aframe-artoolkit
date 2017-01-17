@@ -1,7 +1,7 @@
 .PHONY: build
 
 build:
-	cat ../threex*.js ./*.js > build/aframe-artoolkit.js 
+	cat aframe-artoolkit.js ./vendor/jsartoolkit/artoolkit.api.js ./vendor/jsartoolkit/artoolkit.debug.js > build/aframe-artoolkit.js 
 
 minify: build
 	uglifyjs build/aframe-artoolkit.js > build/aframe-artoolkit.min.js

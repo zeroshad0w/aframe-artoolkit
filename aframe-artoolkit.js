@@ -7,11 +7,14 @@ AFRAME.registerComponent('artoolkit', {
 	schema: {
                 debug : {
                         type: 'boolean',
-                        default: true
+                        default: false
                 },
                 sourceType : {
                         type: 'string',
                         default: 'webcam'                        
+                },
+                sourceUrl : {
+                        type: 'string',
                 }
 	},
 	init: function () {
@@ -20,7 +23,6 @@ AFRAME.registerComponent('artoolkit', {
                 this.srcElement = null
                 this.arController = null;
                 this.cameraParameters = null
-                
                 this._initSource(function onReady(width, height){
                         console.log('ready')
                         _this._onSourceReady(width, height, function onCompleted(){
@@ -59,6 +61,7 @@ AFRAME.registerComponent('artoolkit', {
         _initSourceImage: function(onReady){
                 var srcElement = document.createElement('img')
 		document.body.appendChild(srcElement)
+		srcElement.src = this.data.sourceUrl
 		srcElement.src = './images/armchair.jpg'
 		// srcElement.src = './images/chalk.jpg'
 		// srcElement.src = './images/chalk_multi.jpg'
@@ -76,6 +79,7 @@ AFRAME.registerComponent('artoolkit', {
 		var srcElement = document.createElement('video');
 		document.body.appendChild(srcElement)
 		// srcElement.src = 'videos/output_4.mp4';
+		srcElement.src = this.data.sourceUrl
 		srcElement.src = 'videos/headtracking.mp4';
 		srcElement.autoplay = true;
 		srcElement.webkitPlaysinline = true;
@@ -168,11 +172,11 @@ AFRAME.registerComponent('artoolkit', {
                                 var markerTracker = arController.trackPatternMarkerId(markerId, markerWidth);
                         });
                         
-                        // load hiro pattern
-                        arController.loadMarker('data/patt.hiro', function(markerId) {
-                                var markerWidth = 1
-                                var markerTracker = arController.trackPatternMarkerId(markerId, markerWidth);
-                        });
+                        // // load hiro pattern
+                        // arController.loadMarker('data/patt.hiro', function(markerId) {
+                        //         var markerWidth = 1
+                        //         var markerTracker = arController.trackPatternMarkerId(markerId, markerWidth);
+                        // });
                         
                         onCompleted && onCompleted()
                 
@@ -204,7 +208,7 @@ AFRAME.registerComponent('artoolkit', {
 
 		// update markerRoot with the found markers
 		var markerNum = arController.getMarkerNum();
-                // console.log('markerNum', markerNum)
+                console.log('markerNum', markerNum)
                 // return
 		if (markerNum > 0) {
 			// if( markerRoot.visible === false ) {
