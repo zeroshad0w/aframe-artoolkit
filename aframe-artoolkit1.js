@@ -11,7 +11,7 @@ AFRAME.registerSystem('artoolkitsystem', {
                 },
                 sourceType : {
                         type: 'string',
-                        default: 'image'                        
+                        default: 'video'                        
                 },
                 sourceUrl : {
                         type: 'string',
@@ -182,6 +182,13 @@ AFRAME.registerSystem('artoolkitsystem', {
 				console.log('hiro markerTracker', markerTracker)
                         });
                         
+			// arController.addEventListener('getMarker', function(ev) {
+			// 	console.log('================================')
+			// 	console.log("Detected marker with ids:", ev.data.marker.id, ev.data.marker.idPatt, ev.data.marker.idMatrix);
+			// 	console.log("Marker data", ev.data.marker);
+			// 	console.log("Marker transform matrix:", [].join.call(ev.data.matrix, ', '));
+			// });
+
                         onCompleted && onCompleted()
                 
                 })		
@@ -190,6 +197,14 @@ AFRAME.registerSystem('artoolkitsystem', {
         ////////////////////////////////////////////////////////////////////////////////
         //          Code Separator
         ////////////////////////////////////////////////////////////////////////////////
+        tick0 : function(now, delta){
+                var arController = this.arController
+
+                if (!arController) return;
+
+		arController.process(this.srcElement);
+	},
+
         
         tick : function(now, delta){
                 var arController = this.arController
