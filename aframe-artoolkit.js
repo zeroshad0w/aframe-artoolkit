@@ -7,11 +7,11 @@ AFRAME.registerSystem('artoolkitsystem', {
 	schema: {
                 debug : {
                         type: 'boolean',
-                        default: false
+                        default: true
                 },
                 sourceType : {
                         type: 'string',
-                        default: 'image'                        
+                        default: 'webcam'                        
                 },
                 sourceUrl : {
                         type: 'string',
@@ -60,6 +60,7 @@ AFRAME.registerSystem('artoolkitsystem', {
                 this.srcElement.style.zIndex = '-1'
         },
         _initSourceImage: function(onReady){
+console.log('AFRAME-ARTOOLKIT: _initSourceImage')
                 var srcElement = document.createElement('img')
 		document.body.appendChild(srcElement)
 		srcElement.src = this.data.sourceUrl
@@ -77,6 +78,7 @@ AFRAME.registerSystem('artoolkitsystem', {
 		return srcElement                
         },
         _initSourceVideo: function(onReady){
+console.log('AFRAME-ARTOOLKIT: _initSourceVideo')
 		var srcElement = document.createElement('video');
 		document.body.appendChild(srcElement)
 		// srcElement.src = 'videos/output_4.mp4';
@@ -94,6 +96,7 @@ AFRAME.registerSystem('artoolkitsystem', {
 		return srcElement
 	},
         _initSourceWebcam: function(onReady){
+console.log('AFRAME-ARTOOLKIT: _initSourceWebcam')
 		navigator.getUserMedia  = navigator.getUserMedia || navigator.webkitGetUserMedia || navigator.mozGetUserMedia || navigator.msGetUserMedia;
 
 		var srcElement = document.createElement('video');
@@ -151,13 +154,18 @@ AFRAME.registerSystem('artoolkitsystem', {
         
         _onSourceReady: function(width, height, onCompleted){
                 var _this = this
-                console.log('width', width, 'height', height)
+                console.log('AFRAME-ARTOOLKIT: _onSourceReady width', width, 'height', height)
                 _this.cameraParameters = new ARCameraParam('data/camera_para.dat', function() {
                 
                         var arController = new ARController(width, height, _this.cameraParameters);
                         _this.arController = arController
                         
-                        if( _this.data.debug === true )	arController.debugSetup();
+                        if( _this.data.debug === true ){
+				arController.debugSetup();
+				arController.canvas.style.position = 'absolute'
+				arController.canvas.style.top = '0px'
+				arController.canvas.style.opacity = '0.6'
+			}
 
 			var camera = _this.sceneEl.camera
                         console.log('camera is THREE.Object3D', camera)
@@ -179,7 +187,6 @@ AFRAME.registerSystem('artoolkitsystem', {
                         arController.loadMarker('data/patt.hiro', function(markerId) {
                                 var markerWidth = 1
                                 var markerTracker = arController.trackPatternMarkerId(markerId, markerWidth);
-				console.log('hiro markerTracker', markerTracker)
                         });
                         
                         onCompleted && onCompleted()
