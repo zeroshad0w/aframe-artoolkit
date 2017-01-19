@@ -7,6 +7,9 @@
   - parse it and import it here
   - this is import to scale
 - import hatsune miku
+- use arController.process
+  - allow to easily configure the type of markers in the marker component
+  - allow to setup artoolkit with the proper type of detection
   
 
 - DONE make image source more tunable

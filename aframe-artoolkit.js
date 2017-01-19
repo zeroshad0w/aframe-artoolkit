@@ -11,7 +11,7 @@ AFRAME.registerSystem('artoolkitsystem', {
                 },
                 sourceType : {
                         type: 'string',
-                        default: 'webcam'                        
+                        default: 'video'                        
                 },
                 sourceUrl : {
                         type: 'string',
