@@ -11,7 +11,7 @@ AFRAME.registerSystem('artoolkitsystem', {
                 },
                 sourceType : {
                         type: 'string',
-                        default: 'video'                        
+                        default: 'webcam'                        
                 },
                 sourceUrl : {
                         type: 'string',
@@ -197,18 +197,14 @@ console.log('AFRAME-ARTOOLKIT: _initSourceWebcam')
         ////////////////////////////////////////////////////////////////////////////////
         //          Code Separator
         ////////////////////////////////////////////////////////////////////////////////
-        tickProut : function(now, delta){
+        tick : function(now, delta){
                 var arController = this.arController
 
                 if (!arController) return;
 // debugger;
 		arController.process(this.srcElement)
-		
-		arController.addEventListener('getMarker', function(){
-			console.log('AFRAME-ARTOOLKIT: getMarker', arguments)
-		})
 	},
-        tick : function(now, delta){
+        tickProut : function(now, delta){
                 var arController = this.arController
 
                 if (!arController) return;
@@ -254,6 +250,7 @@ console.log('AFRAME-ARTOOLKIT: _initSourceWebcam')
 			// }
 			arController.transMatToGLMat(markerRoot.userData.markerMatrix, markerRoot.matrix.elements);
 			markerRoot.visible = true			
+console.log('getMarker', Date.now(), markerRoot.matrix)
 		}
         },
 
@@ -299,17 +296,13 @@ AFRAME.registerComponent('artoolkitmarker', {
         	markerRoot.name = 'Marker Root'
         	markerRoot.userData.markerMatrix = new Float64Array(12);
         	markerRoot.matrixAutoUpdate = false;
-        	markerRoot.visible = false
+        	markerRoot.visible = true
 
 		var artoolkitsystem = this.el.sceneEl.systems.artoolkitsystem
 		var arController = artoolkitsystem.arController
 		artoolkitsystem.addMarker(this)
 
                 console.log('AFRAME-ARTOOLKIT: artoolkit', arController)
-// FIXME busy loop until arController isnt non null		
-		// arController.addEventListener('getMarker', function(){
-		// 	console.log('getMarker', arguments)
-		// })
 		
 		if( this.data.type === 'kanji' ){
 			this.markerId = 0
@@ -321,6 +314,25 @@ AFRAME.registerComponent('artoolkitmarker', {
 			console.assert(false)
 		}
 		
+		var delayedInitTimerId = setInterval(function(){
+			// check the init is done
+			var artoolkitsystem = _this.el.sceneEl.systems.artoolkitsystem
+			var arController = artoolkitsystem.arController
+			// 
+			if( arController === null )	return
+			// stop looping
+			clearInterval(delayedInitTimerId)
+			delayedInitTimerId = null
+
+			// console.log('arController', arController)
+			// debugger;
+			arController.addEventListener('getMarker', function(event){
+				var data = event.data
+				// console.log('getMarker', data.matrix)
+				// console.log('getMarker', Date.now(), data.matrix)
+				markerRoot.matrix.fromArray(data.matrix)
+			})
+		}, 1000/10)
 	},
 	remove : function(){
 		var artoolkitsystem = this.el.components.artoolkitsystem
