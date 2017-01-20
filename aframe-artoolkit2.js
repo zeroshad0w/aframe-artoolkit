@@ -11,19 +11,11 @@ AFRAME.registerSystem('artoolkitsystem', {
                 },
                 sourceType : {
                         type: 'string',
-                        default: 'webcam'                        
+                        default: 'video'                        
                 },
                 sourceUrl : {
                         type: 'string',
-                },
-		detectionMode : {
-			type: 'string',
-			default: 'color'
-		},
-		matrixCodeType : {
-			type: 'string',
-			default: '3x3'			
-		}
+                }
 	},
 	init: function () {
                 console.log('init system artoolkit')
@@ -164,11 +156,10 @@ console.log('AFRAME-ARTOOLKIT: _initSourceWebcam')
                 var _this = this
                 console.log('AFRAME-ARTOOLKIT: _onSourceReady width', width, 'height', height)
                 _this.cameraParameters = new ARCameraParam('data/camera_para.dat', function() {
-                	// init controller
+                
                         var arController = new ARController(width, height, _this.cameraParameters);
                         _this.arController = arController
                         
-			// honor this.data.debug
                         if( _this.data.debug === true ){
 				arController.debugSetup();
 				arController.canvas.style.position = 'absolute'
@@ -176,35 +167,28 @@ console.log('AFRAME-ARTOOLKIT: _initSourceWebcam')
 				arController.canvas.style.opacity = '0.6'
 			}
 
-			// set projectionMatrix
+			var camera = _this.sceneEl.camera
+                        console.log('camera is THREE.Object3D', camera)
+
                         var projectionMatrix = arController.getCameraMatrix();
-                        _this.sceneEl.camera.projectionMatrix.fromArray(projectionMatrix);
+                        camera.projectionMatrix.elements.set(projectionMatrix);
 
-			// setPatternDetectionMode
-			var detectionModes = {
-				'color'			: artoolkit.AR_TEMPLATE_MATCHING_COLOR,
-				'color_and_matrix'	: artoolkit.AR_TEMPLATE_MATCHING_COLOR_AND_MATRIX,
-				'mono'			: artoolkit.AR_TEMPLATE_MATCHING_MONO,
-				'mono_and_matrix'	: artoolkit.AR_TEMPLATE_MATCHING_MONO_AND_MATRIX,
-			}
-			var detectionMode = detectionModes[_this.data.detectionMode]
-			console.assert(detectionMode !== undefined)
-			arController.setPatternDetectionMode(detectionMode);
+                        // TODO to remove later
+			
+			// arController.setPatternDetectionMode(artoolkit.AR_TEMPLATE_MATCHING_MONO_AND_MATRIX);
 
-			// setMatrixCodeType
-			var matrixCodeTypes = {
-				'3x3'		: artoolkit.AR_MATRIX_CODE_3x3,
-				'3x3_HAMMING63'	: artoolkit.AR_MATRIX_CODE_3x3_HAMMING63,
-				'3x3_PARITY65'	: artoolkit.AR_MATRIX_CODE_3x3_PARITY65,
-				'4x4'		: artoolkit.AR_MATRIX_CODE_4x4,
-				'4x4_BCH_13_9_3': artoolkit.AR_MATRIX_CODE_4x4_BCH_13_9_3,
-				'4x4_BCH_13_5_5': artoolkit.AR_MATRIX_CODE_4x4_BCH_13_5_5,
-			}
-			var matrixCodeType = matrixCodeTypes[_this.data.matrixCodeType]
-			console.assert(matrixCodeType !== undefined)
-			arController.setMatrixCodeType(matrixCodeType);
-
-        		// notify
+                        // load kanji pattern
+                        arController.loadMarker('data/patt.kanji', function(markerId) {
+                                var markerWidth = 1
+                                var markerTracker = arController.trackPatternMarkerId(markerId, markerWidth);
+                        });
+                        
+                        // load hiro pattern
+                        arController.loadMarker('data/patt.hiro', function(markerId) {
+                                var markerWidth = 1
+                                var markerTracker = arController.trackPatternMarkerId(markerId, markerWidth);
+                        });
+                        
                         onCompleted && onCompleted()
                 
                 })		
@@ -225,6 +209,55 @@ console.log('AFRAME-ARTOOLKIT: _initSourceWebcam')
 
 		arController.process(this.srcElement)
 	},
+        tickProut : function(now, delta){
+                var arController = this.arController
+
+                if (!arController) return;
+		// - use arController.process
+		// - it handle all the marker type
+
+		arController.detectMarker(this.srcElement);
+
+                if( this.data.debug === true )	arController.debugDraw();
+
+		// mark all markers to invisible
+		this._markerElements.forEach(function(markerElement){
+			markerElement.el.object3D.visible = false
+		})
+
+		// update markerRoot with the found markers
+		var nMarkersFound = arController.getMarkerNum();
+                // console.log('nMarkersFound', nMarkersFound)
+
+		if( nMarkersFound === 0 )	return
+
+		// var i = 0
+		for( var markerIndex = 0; markerIndex < nMarkersFound; markerIndex++){
+			var markerInfo = arController.getMarker(markerIndex)
+			// console.dir(markerInfo)
+			// console.log('markerInfo.id', markerInfo.id)
+			
+			var markerElement = this._markerElements.find(function(markerElement){
+				if( markerElement.data.type === 'any' )	return true
+				return markerElement.markerId === markerInfo.id ? true : false
+			})
+			if( markerElement === undefined )	continue
+			// console.log(markerElement)
+			// var markerElement = this._markerElements[0]
+			var markerRoot = markerElement.el.object3D
+			// console.log(markerRoot)
+
+			// debugger
+			// if( markerRoot.visible === false ) {
+				arController.getTransMatSquare(markerIndex /* Marker index */, 1 /* Marker width */, markerRoot.userData.markerMatrix);
+			// } else {
+				// arController.getTransMatSquareCont(markerIndex, 1, markerRoot.userData.markerMatrix, markerRoot.userData.markerMatrix);
+			// }
+			arController.transMatToGLMat(markerRoot.userData.markerMatrix, markerRoot.matrix.elements);
+			markerRoot.visible = true			
+console.log('getMarker', Date.now(), markerRoot.matrix)
+		}
+        },
 
 	////////////////////////////////////////////////////////////////////////////////
 	//          Code Separator
@@ -270,10 +303,18 @@ AFRAME.registerComponent('artoolkitmarker', {
         	markerRoot.matrixAutoUpdate = false;
         	markerRoot.visible = true
 
-		this.markerId = null
-
 		var artoolkitsystem = this.el.sceneEl.systems.artoolkitsystem
 		artoolkitsystem.addMarker(this)
+		
+		if( this.data.type === 'kanji' ){
+			this.markerId = 0
+		}else if( this.data.type === 'hiro' ){
+			this.markerId = 1
+		}else if( this.data.type === 'any' ){
+			this.markerId = -1
+		}else{
+			console.assert(false)
+		}
 		
 		var delayedInitTimerId = setInterval(function(){
 			// check the init is done
@@ -285,36 +326,28 @@ AFRAME.registerComponent('artoolkitmarker', {
 			clearInterval(delayedInitTimerId)
 			delayedInitTimerId = null
 
-			if( _this.data.type === 'pattern' ){
-				// debugger
-	                        arController.loadMarker(_this.data.url, function(markerId) {
-					_this.markerId = markerId
-					// debugger
-					console.log('marker loaded')
-	                                var markerWidth = _this.data.size
-	                                var markerWidth = 1 
-	                                var markerTracker = arController.trackPatternMarkerId(markerId, markerWidth);
-	                        });				
-			}
-
+			// console.log('arController', arController)
+			// debugger;
 			arController.addEventListener('getMarker', function(event){
 				var data = event.data
-				if( data.type === artoolkit.PATTERN_MARKER && _this.data.type === 'pattern' ){
-					if( _this.markerId === null )	return
-					if( data.marker.id === _this.markerId ){
-						markerRoot.matrix.fromArray(data.matrix)
-						markerRoot.visible = true
-					}
+				if( data.type === artoolkit.BARCODE_MARKER ){
+					console.log('barcode marker', data.marker)
+				}else if( data.type === artoolkit.PATTERN_MARKER ){
+					console.log('pattern marker', data.marker)
+				}else{
+					console.log('marker type', data.type)
 				}
+				// is it for me ?
+				// console.log('getMarker', data.matrix)
+				// console.log('getMarker', Date.now(), data.matrix)
+				markerRoot.matrix.fromArray(data.matrix)
+				markerRoot.visible = true
 			})
 		}, 1000/10)
 	},
 	remove : function(){
 		var artoolkitsystem = this.el.components.artoolkitsystem
 		artoolkitsystem.removeMarker(this)
-		
-		// TODO remove the event listener if needed
-		// unloadMaker ???
 	},
 	tick : function(now, delta){
 	},
