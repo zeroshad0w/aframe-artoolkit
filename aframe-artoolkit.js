@@ -175,7 +175,7 @@ console.log('AFRAME-ARTOOLKIT: _initSourceWebcam')
 
                         // TODO to remove later
 			
-			// arController.setPatternDetectionMode(artoolkit.AR_TEMPLATE_MATCHING_MONO_AND_MATRIX);
+			arController.setPatternDetectionMode(artoolkit.AR_TEMPLATE_MATCHING_MONO_AND_MATRIX);
 
                         // load kanji pattern
                         arController.loadMarker('data/patt.kanji', function(markerId) {
@@ -197,7 +197,17 @@ console.log('AFRAME-ARTOOLKIT: _initSourceWebcam')
         ////////////////////////////////////////////////////////////////////////////////
         //          Code Separator
         ////////////////////////////////////////////////////////////////////////////////
-        
+        tickProut : function(now, delta){
+                var arController = this.arController
+
+                if (!arController) return;
+// debugger;
+		arController.process(this.srcElement)
+		
+		arController.addEventListener('getMarker', function(){
+			console.log('AFRAME-ARTOOLKIT: getMarker', arguments)
+		})
+	},
         tick : function(now, delta){
                 var arController = this.arController
 
@@ -295,7 +305,11 @@ AFRAME.registerComponent('artoolkitmarker', {
 		var arController = artoolkitsystem.arController
 		artoolkitsystem.addMarker(this)
 
-                console.log('artoolkit', artoolkitsystem)
+                console.log('AFRAME-ARTOOLKIT: artoolkit', arController)
+// FIXME busy loop until arController isnt non null		
+		// arController.addEventListener('getMarker', function(){
+		// 	console.log('getMarker', arguments)
+		// })
 		
 		if( this.data.type === 'kanji' ){
 			this.markerId = 0
