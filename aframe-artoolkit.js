@@ -7,11 +7,11 @@ AFRAME.registerSystem('artoolkitsystem', {
 	schema: {
                 debug : {
                         type: 'boolean',
-                        default: true
+                        default: false
                 },
                 sourceType : {
                         type: 'string',
-                        default: 'webcam'                        
+                        default: 'video'                        
                 },
                 sourceUrl : {
                         type: 'string',
@@ -81,9 +81,9 @@ console.log('AFRAME-ARTOOLKIT: _initSourceImage')
 console.log('AFRAME-ARTOOLKIT: _initSourceVideo')
 		var srcElement = document.createElement('video');
 		document.body.appendChild(srcElement)
-		// srcElement.src = 'videos/output_4.mp4';
 		srcElement.src = this.data.sourceUrl
-		srcElement.src = 'videos/headtracking.mp4';
+		srcElement.src = 'videos/output_4.mp4';
+		// srcElement.src = 'videos/headtracking.mp4';
 		srcElement.autoplay = true;
 		srcElement.webkitPlaysinline = true;
 		srcElement.controls = false;
@@ -175,7 +175,7 @@ console.log('AFRAME-ARTOOLKIT: _initSourceWebcam')
 
                         // TODO to remove later
 			
-			arController.setPatternDetectionMode(artoolkit.AR_TEMPLATE_MATCHING_MONO_AND_MATRIX);
+			// arController.setPatternDetectionMode(artoolkit.AR_TEMPLATE_MATCHING_MONO_AND_MATRIX);
 
                         // load kanji pattern
                         arController.loadMarker('data/patt.kanji', function(markerId) {
@@ -201,7 +201,12 @@ console.log('AFRAME-ARTOOLKIT: _initSourceWebcam')
                 var arController = this.arController
 
                 if (!arController) return;
-// debugger;
+
+		// mark all markers to invisible
+		this._markerElements.forEach(function(markerElement){
+			markerElement.el.object3D.visible = false
+		})
+
 		arController.process(this.srcElement)
 	},
         tickProut : function(now, delta){
@@ -299,10 +304,7 @@ AFRAME.registerComponent('artoolkitmarker', {
         	markerRoot.visible = true
 
 		var artoolkitsystem = this.el.sceneEl.systems.artoolkitsystem
-		var arController = artoolkitsystem.arController
 		artoolkitsystem.addMarker(this)
-
-                console.log('AFRAME-ARTOOLKIT: artoolkit', arController)
 		
 		if( this.data.type === 'kanji' ){
 			this.markerId = 0
@@ -328,9 +330,18 @@ AFRAME.registerComponent('artoolkitmarker', {
 			// debugger;
 			arController.addEventListener('getMarker', function(event){
 				var data = event.data
+				if( data.type === artoolkit.BARCODE_MARKER ){
+					console.log('barcode marker', data.marker)
+				}else if( data.type === artoolkit.PATTERN_MARKER ){
+					console.log('pattern marker', data.marker)
+				}else{
+					console.log('marker type', data.type)
+				}
+				// is it for me ?
 				// console.log('getMarker', data.matrix)
 				// console.log('getMarker', Date.now(), data.matrix)
 				markerRoot.matrix.fromArray(data.matrix)
+				markerRoot.visible = true
 			})
 		}, 1000/10)
 	},
