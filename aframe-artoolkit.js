@@ -8,7 +8,7 @@ AFRAME.registerSystem('artoolkit', {
 	schema: {
                 debug : {
                         type: 'boolean',
-                        default: true
+                        default: false
                 },
                 sourceType : {
                         type: 'string',
@@ -100,11 +100,16 @@ AFRAME.registerSystem('artoolkit', {
 		srcElement.webkitPlaysinline = true;
 		srcElement.controls = false;
 		srcElement.loop = true;
+
 		srcElement.width = 640;
 		srcElement.height = 480;
-		setTimeout(function(){
-			onReady && onReady()
-		}, 0)
+		
+		// wait until the video stream is ready
+		var interval = setInterval(function() {
+			if (!srcElement.videoWidth)	return;
+			onReady()
+			clearInterval(interval)
+		}, 1000/100);
 		return srcElement
 	},
         _initSourceWebcam: function(onReady){
@@ -207,9 +212,10 @@ AFRAME.registerSystem('artoolkit', {
 			console.assert(matrixCodeType !== undefined)
 			arController.setMatrixCodeType(matrixCodeType);
 
+			console.warn('arController fully initialized')
+
         		// notify
-                        onCompleted && onCompleted()
-                
+                        onCompleted && onCompleted()                
                 })		
         },
         
@@ -258,7 +264,7 @@ AFRAME.registerComponent('artoolkitmarker', {
 		},
 		type: {
 			type: 'string',
-			default : 'barcode'
+			default : 'unknown'
 		},
 		patternUrl: {
 			type: 'string',
@@ -328,7 +334,7 @@ AFRAME.registerComponent('artoolkitmarker', {
 					var quaternion = new THREE.Quaternion
 					var scale = new THREE.Vector3
 					markerRoot.matrix.decompose(position, quaternion, scale)
-					console.log('position', position)
+					// console.log('position', position)
 				}
 
 			})
@@ -342,8 +348,8 @@ AFRAME.registerComponent('artoolkitmarker', {
 		// unloadMaker ???
 	},
 	update: function () {
-        	var markerRoot = this.el.object3D;
-        	markerRoot.userData.size = this.data.size;
+        	// var markerRoot = this.el.object3D;
+        	// markerRoot.userData.size = this.data.size;
 	},
 });
 

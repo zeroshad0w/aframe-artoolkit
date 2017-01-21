@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <script src="https://aframe.io/releases/0.4.0/aframe.min.js"></script>
 <!-- jsartookit -->
@@ -9,8 +8,12 @@
 
 <body>
 	<a-scene artoolkit='sourceType: video; sourceUrl:./videos/headtracking.mp4;'>
+	<!-- <a-scene artoolkit='sourceType: image; sourceUrl:./images/armchair.jpg;'> -->
+	<!-- <a-scene artoolkit='sourceType: image; sourceUrl:./images/screenshot.png'> -->
 
-		<a-marker type='pattern' url='data/patt.kanji'>
+		<!-- <a-box depth="1" height="1" width="1" position='1.9768199920654297 -0.023161333054304123 6.846858978271484' material='opacity: 0.5; side:double; color:blue;'></a-box> -->
+
+		<a-marker type='unknown'>
 			<a-box depth="1" height="1" width="1" position='0 0 0.5' material='opacity: 0.5; side:double; color:blue;'></a-box>
 		</a-marker>
 
@@ -39,6 +42,11 @@
 		<a-cylinder position="1 0.75 -3" radius="0.5" height="1.5" color="#FFC65D"></a-cylinder>
 		<a-plane position="0 0 -4" rotation="-90 0 0" width="4" height="4" color="#7BC8A4"></a-plane>
 		<!-- <a-sky color="#ECECEC"></a-sky>  -->
+		<!-- <a-entity camera position='0 0 0' rotation="0 180 0"></a-entity> -->
+		
+		<!-- on armchair.jpg {x: 0.9589369893074036, y: 0.224634051322937, z: 9.4503812789917} -->
+		<!-- {x: 1.9768199920654297, y: -0.023161333054304123, z: 6.846858978271484} -->
+		<!-- <a-entity camera position='0 0 0'></a-entity> -->
 		<a-entity camera></a-entity>
 	</a-scene>
 </body>

@@ -3,8 +3,8 @@
 <!-- three.js library -->
 <script src='vendor/three.js/build/three.js'></script>
 <!-- jsartookit -->
-<script src="../vendor/jsartoolkit/artoolkit.debug.js"></script>
-<script src="../vendor/jsartoolkit/artoolkit.api.js"></script>
+<script src="../../vendor/jsartoolkit/artoolkit.debug.js"></script>
+<script src="../../vendor/jsartoolkit/artoolkit.api.js"></script>
 
 <style>
 	body {
@@ -41,7 +41,7 @@
 	function initSourceVideo(onReady){
 		var srcElement = document.createElement('video');
 		document.body.appendChild(srcElement)
-		srcElement.src = 'videos/output_4.mp4';
+		srcElement.src = '../videos/output_4.mp4';
 		// srcElement.src = 'videos/headtracking.mp4';
 		srcElement.autoplay = true;
 		srcElement.webkitPlaysinline = true;
@@ -58,11 +58,11 @@
 	function initSourceImage(onReady){
 		var srcElement = document.createElement('img')
 		document.body.appendChild(srcElement)
-		srcElement.src = './images/armchair.jpg'
-		// srcElement.src = './images/chalk.jpg'
-		// srcElement.src = './images/chalk_multi.jpg'
-		// srcElement.src = './images/kuva.jpg'
-		// srcElement.src = './images/img.jpg'
+		srcElement.src = '../images/armchair.jpg'
+		// srcElement.src = '../images/chalk.jpg'
+		// srcElement.src = '../images/chalk_multi.jpg'
+		// srcElement.src = '../images/kuva.jpg'
+		// srcElement.src = '../images/img.jpg'
 		srcElement.width = 640
 		srcElement.height = 480
 
@@ -220,7 +220,7 @@
 	var arController = null;
 	function onSourceImageReady(width, height, onCompleted){
 		console.log(arguments)
-		var cameraParameters = new ARCameraParam('data/camera_para.dat', function() {
+		var cameraParameters = new ARCameraParam('../data/camera_para.dat', function() {
 		
 			arController = new ARController(width, height, cameraParameters);
 			if( debugEnabled )	arController.debugSetup();
@@ -230,16 +230,16 @@
 			
 			arController.setPatternDetectionMode(artoolkit.AR_TEMPLATE_MATCHING_MONO_AND_MATRIX);
 			// load kanji pattern
-			arController.loadMarker('Data/patt.kanji', function(markerId) {
+			arController.loadMarker('../data/patt.kanji', function(markerId) {
 				var markerWidth = 1
 				var markerTracker = arController.trackPatternMarkerId(markerId, markerWidth);
-			});
+			})
 	
 			// load hiro pattern
-			arController.loadMarker('Data/patt.hiro', function(markerId) {
+			arController.loadMarker('../data/patt.hiro', function(markerId) {
 				var markerWidth = 1
-				var markerTracker = arController.trackPatternMarkerId(markerId, markerWidth);
-			});
+				var markerTracker = arController.trackPatternMarkerId(markerId, markerWidth)
+			})
 	
 			onCompleted && onCompleted()
 		
@@ -248,9 +248,9 @@
 
 
 	// create the marker Root
-	var markerRoot = new THREE.Object3D();
+	var markerRoot = new THREE.Object3D()
 	markerRoot.name = 'Marker Root'
-	markerRoot.userData.markerMatrix = new Float64Array(12);
+	markerRoot.userData.markerMatrix = new Float64Array(12)
 	markerRoot.matrixAutoUpdate = false;
 	markerRoot.visible = false
 	scene.add(markerRoot);
