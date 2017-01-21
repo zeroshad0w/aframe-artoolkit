@@ -1,14 +1,18 @@
-- rename artoolkitsystem into artoolkit
 - fix the video as source... it doesnt work for whatever reason
   - important to debug
-- issue with the source init. it is initialized many times
+- fix the source initialisation
   - work if set by default, but not if explicitly given in html
   - double init ?
   - why it doesnt work in the video
-
+- make good examples
+  - some WOW examples
+  - some exposing all the feature of the libraty
+- fix the no aspect update - ask fill
 - import hatsune miku/minecraft
-
 - make a-frame more configurable ? 
   - test configuation of system
   - interaction with the inspector
-- 
+- <a-marker type='pattern' url='data/patt.kanji'> if no type defined, but url is ? then default to pattern
+- <a-marker type='barcode' value=20'> if no type defined, but value is ? then default to barcode
+
+- DONE rename artoolkitsystem into artoolkit

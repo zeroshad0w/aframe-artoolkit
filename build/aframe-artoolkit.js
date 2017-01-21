@@ -8,7 +8,7 @@ AFRAME.registerSystem('artoolkit', {
 	schema: {
                 debug : {
                         type: 'boolean',
-                        default: false
+                        default: true
                 },
                 sourceType : {
                         type: 'string',
@@ -19,12 +19,16 @@ AFRAME.registerSystem('artoolkit', {
                 },
 		detectionMode : {
 			type: 'string',
-			// default: 'color'
-			default: 'mono_and_matrix'
+			default: 'color_and_matrix'
 		},
 		matrixCodeType : {
 			type: 'string',
-			default: '3x3'			
+			default: '3x3',
+			// default: '3x3_HAMMING63',
+			// default: '3x3_PARITY65',
+			// default: '4x4',
+			// default: '4x4_BCH_13_9_3',
+			// default: '4x4_BCH_13_5_5',
 		}
 	},
 	init: function () {
@@ -73,7 +77,7 @@ AFRAME.registerSystem('artoolkit', {
                 var srcElement = document.createElement('img')
 		document.body.appendChild(srcElement)
 		srcElement.src = this.data.sourceUrl
-		srcElement.src = './images/armchair.jpg'
+		// srcElement.src = './images/armchair.jpg'
 		// srcElement.src = './images/chalk.jpg'
 		// srcElement.src = './images/chalk_multi.jpg'
 		// srcElement.src = './images/kuva.jpg'
@@ -90,7 +94,7 @@ AFRAME.registerSystem('artoolkit', {
 		var srcElement = document.createElement('video');
 		document.body.appendChild(srcElement)
 		srcElement.src = this.data.sourceUrl
-		srcElement.src = 'videos/output_4.mp4';
+		// srcElement.src = 'videos/output_4.mp4';
 		// srcElement.src = 'videos/headtracking.mp4';
 		srcElement.autoplay = true;
 		srcElement.webkitPlaysinline = true;
@@ -254,6 +258,7 @@ AFRAME.registerComponent('artoolkitmarker', {
 		},
 		type: {
 			type: 'string',
+			default : 'barcode'
 		},
 		patternUrl: {
 			type: 'string',
@@ -295,6 +300,8 @@ AFRAME.registerComponent('artoolkitmarker', {
 			}else if( _this.data.type === 'barcode' ){
 				_this.markerId = _this.data.barcodeValue
 				arController.trackBarcodeMarkerId(this.markerId, _this.data.size);
+			}else if( _this.data.type === 'unknown' ){
+				_this.markerId = null
 			}else{
 				console.log(false, 'invalid data type', _this.data.type)
 			}
@@ -302,6 +309,7 @@ AFRAME.registerComponent('artoolkitmarker', {
 			// listen to the event 
 			arController.addEventListener('getMarker', function(event){
 				var data = event.data
+				// console.log('data', data)
 				if( data.type === artoolkit.PATTERN_MARKER && _this.data.type === 'pattern' ){
 					if( _this.markerId === null )	return
 					if( data.marker.idPatt === _this.markerId ){
@@ -309,12 +317,15 @@ AFRAME.registerComponent('artoolkitmarker', {
 						markerRoot.visible = true
 					}
 				}else if( data.type === artoolkit.BARCODE_MARKER && _this.data.type === 'barcode' ){
-					console.log('idMatrix', data.marker.idMatrix, _this.markerId )
+					console.log('BARCODE_MARKER idMatrix', data.marker.idMatrix, _this.markerId )
 					if( _this.markerId === null )	return
 					if( data.marker.idMatrix === _this.markerId ){
 						markerRoot.matrix.fromArray(data.matrix)
 						markerRoot.visible = true
 					}
+				}else if( data.type === artoolkit.UNKNOWN_MARKER && _this.data.type === 'unknown'){
+					markerRoot.matrix.fromArray(data.matrix)
+					markerRoot.visible = true
 				}
 			})
 		}, 1000/10)
@@ -503,7 +514,6 @@ AFRAME.registerPrimitive('a-marker', AFRAME.utils.extendDeep({}, AFRAME.primitiv
 
 			if (markerType !== artoolkit.UNKNOWN_MARKER && visible.inPrevious) {
 				this.getTransMatSquareCont(i, visible.markerWidth, visible.matrix, visible.matrix);
-				// this.getTransMatSquare(i, visible.markerWidth, visible.matrix);
 			} else {
 				this.getTransMatSquare(i, visible.markerWidth, visible.matrix);
 			}

@@ -1,9 +1,9 @@
 
 <!DOCTYPE html>
 <script src="https://aframe.io/releases/0.4.0/aframe.min.js"></script>
-<script src="../build/aframe-artoolkit.min.js"></script>
+<script src="../build/aframe-artoolkit.js"></script>
 <body>
-	<a-scene artoolkitsystem>		
+	<a-scene artoolkit>
 		<a-marker>
 			<a-box depth="1" height="1" width="1" position='0 0 0.5' material='opacity: 0.5; side:double'></a-box>
 			<a-entity geometry="primitive: torusKnot; radius: 0.3; radiusTubular: 0.05" position='0 0 0.5'>
@@ -11,9 +11,6 @@
 			</a-entity>
 		</a-marker>
 
-		<!-- <a-sphere position="0 1.25 -5" radius="1.25" color="#EF2D5E"></a-sphere>
-		<a-cylinder position="1 0.75 -3" radius="0.5" height="1.5" color="#FFC65D"></a-cylinder>
-		<a-plane position="0 0 -4" rotation="-90 0 0" width="4" height="4" color="#7BC8A4"></a-plane> -->
 		<a-entity camera></a-entity>
 	</a-scene>
 </body>

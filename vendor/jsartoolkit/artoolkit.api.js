@@ -154,7 +154,6 @@
 
 			if (markerType !== artoolkit.UNKNOWN_MARKER && visible.inPrevious) {
 				this.getTransMatSquareCont(i, visible.markerWidth, visible.matrix, visible.matrix);
-				// this.getTransMatSquare(i, visible.markerWidth, visible.matrix);
 			} else {
 				this.getTransMatSquare(i, visible.markerWidth, visible.matrix);
 			}
