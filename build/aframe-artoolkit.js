@@ -1,9 +1,10 @@
-//////////////////////////////////////////////////////////////////////////////
+
+
 //////////////////////////////////////////////////////////////////////////////
 //		Code Separator
 //////////////////////////////////////////////////////////////////////////////
 
-AFRAME.registerSystem('artoolkitsystem', {
+AFRAME.registerSystem('artoolkit', {
 	schema: {
                 debug : {
                         type: 'boolean',
@@ -15,7 +16,16 @@ AFRAME.registerSystem('artoolkitsystem', {
                 },
                 sourceUrl : {
                         type: 'string',
-                }
+                },
+		detectionMode : {
+			type: 'string',
+			// default: 'color'
+			default: 'mono_and_matrix'
+		},
+		matrixCodeType : {
+			type: 'string',
+			default: '3x3'			
+		}
 	},
 	init: function () {
                 console.log('init system artoolkit')
@@ -79,9 +89,9 @@ AFRAME.registerSystem('artoolkitsystem', {
         _initSourceVideo: function(onReady){
 		var srcElement = document.createElement('video');
 		document.body.appendChild(srcElement)
-		// srcElement.src = 'videos/output_4.mp4';
 		srcElement.src = this.data.sourceUrl
-		srcElement.src = 'videos/headtracking.mp4';
+		srcElement.src = 'videos/output_4.mp4';
+		// srcElement.src = 'videos/headtracking.mp4';
 		srcElement.autoplay = true;
 		srcElement.webkitPlaysinline = true;
 		srcElement.controls = false;
@@ -151,37 +161,49 @@ AFRAME.registerSystem('artoolkitsystem', {
         
         _onSourceReady: function(width, height, onCompleted){
                 var _this = this
-                console.log('width', width, 'height', height)
+                console.log('AFRAME-ARTOOLKIT: _onSourceReady width', width, 'height', height)
                 _this.cameraParameters = new ARCameraParam('data/camera_para.dat', function() {
-                
+                	// init controller
                         var arController = new ARController(width, height, _this.cameraParameters);
                         _this.arController = arController
                         
-                        if( _this.data.debug === true )	arController.debugSetup();
+			// honor this.data.debug
+                        if( _this.data.debug === true ){
+				arController.debugSetup();
+				arController.canvas.style.position = 'absolute'
+				arController.canvas.style.top = '0px'
+				arController.canvas.style.opacity = '0.6'
+			}
 
-			var camera = _this.sceneEl.camera
-                        console.log('camera is THREE.Object3D', camera)
-
+			// set projectionMatrix
                         var projectionMatrix = arController.getCameraMatrix();
-                        camera.projectionMatrix.elements.set(projectionMatrix);
+                        _this.sceneEl.camera.projectionMatrix.fromArray(projectionMatrix);
 
-                        // TODO to remove later
-			
-			// arController.setPatternDetectionMode(artoolkit.AR_TEMPLATE_MATCHING_MONO_AND_MATRIX);
+			// setPatternDetectionMode
+			var detectionModes = {
+				'color'			: artoolkit.AR_TEMPLATE_MATCHING_COLOR,
+				'color_and_matrix'	: artoolkit.AR_TEMPLATE_MATCHING_COLOR_AND_MATRIX,
+				'mono'			: artoolkit.AR_TEMPLATE_MATCHING_MONO,
+				'mono_and_matrix'	: artoolkit.AR_TEMPLATE_MATCHING_MONO_AND_MATRIX,
+			}
+			var detectionMode = detectionModes[_this.data.detectionMode]
+			console.assert(detectionMode !== undefined)
+			arController.setPatternDetectionMode(detectionMode);
 
-                        // load kanji pattern
-                        arController.loadMarker('data/patt.kanji', function(markerId) {
-                                var markerWidth = 1
-                                var markerTracker = arController.trackPatternMarkerId(markerId, markerWidth);
-                        });
-                        
-                        // load hiro pattern
-                        arController.loadMarker('data/patt.hiro', function(markerId) {
-                                var markerWidth = 1
-                                var markerTracker = arController.trackPatternMarkerId(markerId, markerWidth);
-				console.log('hiro markerTracker', markerTracker)
-                        });
-                        
+			// setMatrixCodeType
+			var matrixCodeTypes = {
+				'3x3'		: artoolkit.AR_MATRIX_CODE_3x3,
+				'3x3_HAMMING63'	: artoolkit.AR_MATRIX_CODE_3x3_HAMMING63,
+				'3x3_PARITY65'	: artoolkit.AR_MATRIX_CODE_3x3_PARITY65,
+				'4x4'		: artoolkit.AR_MATRIX_CODE_4x4,
+				'4x4_BCH_13_9_3': artoolkit.AR_MATRIX_CODE_4x4_BCH_13_9_3,
+				'4x4_BCH_13_5_5': artoolkit.AR_MATRIX_CODE_4x4_BCH_13_5_5,
+			}
+			var matrixCodeType = matrixCodeTypes[_this.data.matrixCodeType]
+			console.assert(matrixCodeType !== undefined)
+			arController.setMatrixCodeType(matrixCodeType);
+
+        		// notify
                         onCompleted && onCompleted()
                 
                 })		
@@ -190,55 +212,18 @@ AFRAME.registerSystem('artoolkitsystem', {
         ////////////////////////////////////////////////////////////////////////////////
         //          Code Separator
         ////////////////////////////////////////////////////////////////////////////////
-        
         tick : function(now, delta){
+		// be sure arController is fully initialized
                 var arController = this.arController
-
                 if (!arController) return;
-		// - use arController.process
-		// - it handle all the marker type
-
-		arController.detectMarker(this.srcElement);
-
-                if( this.data.debug === true )	arController.debugDraw();
 
 		// mark all markers to invisible
 		this._markerElements.forEach(function(markerElement){
 			markerElement.el.object3D.visible = false
 		})
 
-		// update markerRoot with the found markers
-		var nMarkersFound = arController.getMarkerNum();
-                // console.log('nMarkersFound', nMarkersFound)
-
-		if( nMarkersFound === 0 )	return
-
-		// var i = 0
-		for( var markerIndex = 0; markerIndex < nMarkersFound; markerIndex++){
-			var markerInfo = arController.getMarker(markerIndex)
-			// console.dir(markerInfo)
-			// console.log('markerInfo.id', markerInfo.id)
-			
-			var markerElement = this._markerElements.find(function(markerElement){
-				if( markerElement.data.type === 'any' )	return true
-				return markerElement.markerId === markerInfo.id ? true : false
-			})
-			if( markerElement === undefined )	continue
-			// console.log(markerElement)
-			// var markerElement = this._markerElements[0]
-			var markerRoot = markerElement.el.object3D
-			// console.log(markerRoot)
-
-			// debugger
-			// if( markerRoot.visible === false ) {
-				arController.getTransMatSquare(markerIndex /* Marker index */, 1 /* Marker width */, markerRoot.userData.markerMatrix);
-			// } else {
-				// arController.getTransMatSquareCont(markerIndex, 1, markerRoot.userData.markerMatrix, markerRoot.userData.markerMatrix);
-			// }
-			arController.transMatToGLMat(markerRoot.userData.markerMatrix, markerRoot.matrix.elements);
-			markerRoot.visible = true			
-		}
-        },
+		arController.process(this.srcElement)
+	},
 
 	////////////////////////////////////////////////////////////////////////////////
 	//          Code Separator
@@ -256,62 +241,112 @@ AFRAME.registerSystem('artoolkitsystem', {
 
 });
 
+
 //////////////////////////////////////////////////////////////////////////////
 //		Code Separator
 //////////////////////////////////////////////////////////////////////////////
 AFRAME.registerComponent('artoolkitmarker', {
-        dependencies: ['artoolkitsystem'],
+        dependencies: ['artoolkit'],
 	schema: {
 		size: {
 			type: 'number',
-			value: 1
+			default: 1
 		},
 		type: {
 			type: 'string',
-			default: 'any'
-		}
+		},
+		patternUrl: {
+			type: 'string',
+		},
+		barcodeValue: {
+			type: 'number'
+		},
 	},
 	init: function () {
 		var _this = this
-                // debugger;
-                var artoolkitsystem = this.el.components.artoolkitsystem
-                // if( artoolkitsystem === undefined ) return
+		this.markerId = null
 
                 // create the marker Root
         	var markerRoot = this.el.object3D;
         	markerRoot.name = 'Marker Root'
         	markerRoot.userData.markerMatrix = new Float64Array(12);
         	markerRoot.matrixAutoUpdate = false;
-        	markerRoot.visible = false
+        	markerRoot.visible = true
 
-		var artoolkitsystem = this.el.sceneEl.systems.artoolkitsystem
-		var arController = artoolkitsystem.arController
+		// add this marker to artoolkitsystem
+		var artoolkitsystem = this.el.sceneEl.systems.artoolkit
 		artoolkitsystem.addMarker(this)
+		
+		var delayedInitTimerId = setInterval(function(){
+			// check if arController is init
+			var artoolkitsystem = _this.el.sceneEl.systems.artoolkit
+			var arController = artoolkitsystem.arController
+			if( arController === null )	return
+			// stop looping if it is init
+			clearInterval(delayedInitTimerId)
+			delayedInitTimerId = null
 
-                console.log('artoolkit', artoolkitsystem)
-		
-		if( this.data.type === 'kanji' ){
-			this.markerId = 0
-		}else if( this.data.type === 'hiro' ){
-			this.markerId = 1
-		}else if( this.data.type === 'any' ){
-			this.markerId = -1
-		}else{
-			console.assert(false)
-		}
-		
+			// start tracking this pattern
+			if( _this.data.type === 'pattern' ){
+	                        arController.loadMarker(_this.data.patternUrl, function(markerId) {
+					_this.markerId = markerId
+	                                arController.trackPatternMarkerId(_this.markerId, _this.data.size);
+	                        });				
+			}else if( _this.data.type === 'barcode' ){
+				_this.markerId = _this.data.barcodeValue
+				arController.trackBarcodeMarkerId(this.markerId, _this.data.size);
+			}else{
+				console.log(false, 'invalid data type', _this.data.type)
+			}
+
+			// listen to the event 
+			arController.addEventListener('getMarker', function(event){
+				var data = event.data
+				if( data.type === artoolkit.PATTERN_MARKER && _this.data.type === 'pattern' ){
+					if( _this.markerId === null )	return
+					if( data.marker.idPatt === _this.markerId ){
+						markerRoot.matrix.fromArray(data.matrix)
+						markerRoot.visible = true
+					}
+				}else if( data.type === artoolkit.BARCODE_MARKER && _this.data.type === 'barcode' ){
+					console.log('idMatrix', data.marker.idMatrix, _this.markerId )
+					if( _this.markerId === null )	return
+					if( data.marker.idMatrix === _this.markerId ){
+						markerRoot.matrix.fromArray(data.matrix)
+						markerRoot.visible = true
+					}
+				}
+			})
+		}, 1000/10)
 	},
 	remove : function(){
-		var artoolkitsystem = this.el.components.artoolkitsystem
+		var artoolkitsystem = this.el.sceneEl.systems.artoolkit
 		artoolkitsystem.removeMarker(this)
-	},
-	tick : function(now, delta){
+		
+		// TODO remove the event listener if needed
+		// unloadMaker ???
 	},
 	update: function () {
         	var markerRoot = this.el.object3D;
         	markerRoot.userData.size = this.data.size;
 	},
 });
+
+//////////////////////////////////////////////////////////////////////////////
+//                Code Separator
+//////////////////////////////////////////////////////////////////////////////
+
+AFRAME.registerPrimitive('a-marker', AFRAME.utils.extendDeep({}, AFRAME.primitives.getMeshMixin(), {
+        defaultComponents: {
+                artoolkitmarker: {},
+        },
+        mappings: {
+                'type': 'artoolkitmarker.type',
+                'size': 'artoolkitmarker.size',
+                'url': 'artoolkitmarker.patternUrl',
+                'value': 'artoolkitmarker.barcodeValue',
+        }
+}));
 (function() {
 	'use strict'
 
@@ -468,6 +503,7 @@ AFRAME.registerComponent('artoolkitmarker', {
 
 			if (markerType !== artoolkit.UNKNOWN_MARKER && visible.inPrevious) {
 				this.getTransMatSquareCont(i, visible.markerWidth, visible.matrix, visible.matrix);
+				// this.getTransMatSquare(i, visible.markerWidth, visible.matrix);
 			} else {
 				this.getTransMatSquare(i, visible.markerWidth, visible.matrix);
 			}
@@ -1897,7 +1933,8 @@ AFRAME.registerComponent('artoolkitmarker', {
 		};
 	}
 
-})();// The Module object: Our interface to the outside world. We import
+})();
+// The Module object: Our interface to the outside world. We import
 // and export values on it, and do the work to get that through
 // closure compiler if necessary. There are various ways Module can be used:
 // 1. Not defined. We create it here

@@ -4,7 +4,7 @@
 //		Code Separator
 //////////////////////////////////////////////////////////////////////////////
 
-AFRAME.registerSystem('artoolkitsystem', {
+AFRAME.registerSystem('artoolkit', {
 	schema: {
                 debug : {
                         type: 'boolean',
@@ -246,7 +246,7 @@ AFRAME.registerSystem('artoolkitsystem', {
 //		Code Separator
 //////////////////////////////////////////////////////////////////////////////
 AFRAME.registerComponent('artoolkitmarker', {
-        dependencies: ['artoolkitsystem'],
+        dependencies: ['artoolkit'],
 	schema: {
 		size: {
 			type: 'number',
@@ -274,12 +274,12 @@ AFRAME.registerComponent('artoolkitmarker', {
         	markerRoot.visible = true
 
 		// add this marker to artoolkitsystem
-		var artoolkitsystem = this.el.sceneEl.systems.artoolkitsystem
+		var artoolkitsystem = this.el.sceneEl.systems.artoolkit
 		artoolkitsystem.addMarker(this)
 		
 		var delayedInitTimerId = setInterval(function(){
 			// check if arController is init
-			var artoolkitsystem = _this.el.sceneEl.systems.artoolkitsystem
+			var artoolkitsystem = _this.el.sceneEl.systems.artoolkit
 			var arController = artoolkitsystem.arController
 			if( arController === null )	return
 			// stop looping if it is init
@@ -320,7 +320,7 @@ AFRAME.registerComponent('artoolkitmarker', {
 		}, 1000/10)
 	},
 	remove : function(){
-		var artoolkitsystem = this.el.sceneEl.systems.artoolkitsystem
+		var artoolkitsystem = this.el.sceneEl.systems.artoolkit
 		artoolkitsystem.removeMarker(this)
 		
 		// TODO remove the event listener if needed
