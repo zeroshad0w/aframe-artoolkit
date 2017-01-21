@@ -2,9 +2,9 @@
 <!DOCTYPE html>
 <script src="https://aframe.io/releases/0.4.0/aframe.min.js"></script>
 <script src="../build/aframe-artoolkit.js"></script>
-<body>
+<body style='margin:0px'><div style='width:640px; height:480px;' id='scene-container'>
 	<!-- enable artoolkit on this scene -->
-	<a-scene artoolkit>
+	<a-scene embedded artoolkit>
 		<!-- define a marker -->
 		<a-marker>
 			<!-- define the object which gonna be put on this marker  -->
@@ -16,5 +16,5 @@
 
 		<a-entity camera></a-entity>
 	</a-scene>
-</body>
+</div></body>
 </html>

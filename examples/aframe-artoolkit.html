@@ -6,8 +6,8 @@
 <script src='vendor/threex.minecraft/a-frame/build/aframe-minecraft.min.js'></script>
 <script>THREEx.MinecraftChar.baseUrl = 'vendor/threex.minecraft/'</script>
 
-<body>
-	<div id='aframe-container'></div>
+<body style='margin: 0px'>
+	<div style='width:640px; height:480px;' id='aframe-container'></div>
 	<!-- domElement UI -->
 	<style>
 	body {
@@ -151,7 +151,7 @@
 
 		// init scene based on options
 		var sceneHtml = ''
-		sceneHtml += "<a-scene stats artoolkit='"
+		sceneHtml += "<a-scene stats embedded artoolkit='"
 		// honor options.detectionMode
 		sceneHtml += "detectionMode: "+options.detectionMode+';'
 		// honor options.matrixCodeType

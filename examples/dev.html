@@ -6,9 +6,9 @@
 <!-- aframe-artoolkit -->
 <script src="../aframe-artoolkit.js"></script>
 
-<body>
-	<a-scene artoolkit='sourceType: video; sourceUrl:./videos/headtracking.mp4;'>
-	<!-- <a-scene artoolkit='sourceType: image; sourceUrl:./images/armchair.jpg;'> -->
+<body style='margin:0px'><div style='width:640px; height:480px;' id='scene-container'>
+	<!-- <a-scene embedded artoolkit='sourceType: video; sourceUrl:./videos/headtracking.mp4;'> -->
+	<a-scene embedded artoolkit='sourceType: image; sourceUrl:./images/armchair.jpg;'>
 	<!-- <a-scene artoolkit='sourceType: image; sourceUrl:./images/screenshot.png'> -->
 
 		<!-- <a-box depth="1" height="1" width="1" position='1.9768199920654297 -0.023161333054304123 6.846858978271484' material='opacity: 0.5; side:double; color:blue;'></a-box> -->
@@ -49,5 +49,5 @@
 		<!-- <a-entity camera position='0 0 0'></a-entity> -->
 		<a-entity camera></a-entity>
 	</a-scene>
-</body>
+</div></body>
 </html>
