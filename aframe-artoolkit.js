@@ -1,4 +1,5 @@
-//////////////////////////////////////////////////////////////////////////////
+
+
 //////////////////////////////////////////////////////////////////////////////
 //		Code Separator
 //////////////////////////////////////////////////////////////////////////////
@@ -212,8 +213,8 @@ AFRAME.registerSystem('artoolkitsystem', {
         //          Code Separator
         ////////////////////////////////////////////////////////////////////////////////
         tick : function(now, delta){
+		// be sure arController is fully initialized
                 var arController = this.arController
-
                 if (!arController) return;
 
 		// mark all markers to invisible
@@ -239,6 +240,7 @@ AFRAME.registerSystem('artoolkitsystem', {
 	}
 
 });
+
 
 //////////////////////////////////////////////////////////////////////////////
 //		Code Separator
@@ -318,7 +320,7 @@ AFRAME.registerComponent('artoolkitmarker', {
 		}, 1000/10)
 	},
 	remove : function(){
-		var artoolkitsystem = this.el.components.artoolkitsystem
+		var artoolkitsystem = this.el.sceneEl.systems.artoolkitsystem
 		artoolkitsystem.removeMarker(this)
 		
 		// TODO remove the event listener if needed
@@ -329,3 +331,19 @@ AFRAME.registerComponent('artoolkitmarker', {
         	markerRoot.userData.size = this.data.size;
 	},
 });
+
+//////////////////////////////////////////////////////////////////////////////
+//                Code Separator
+//////////////////////////////////////////////////////////////////////////////
+
+AFRAME.registerPrimitive('a-marker', AFRAME.utils.extendDeep({}, AFRAME.primitives.getMeshMixin(), {
+        defaultComponents: {
+                artoolkitmarker: {},
+        },
+        mappings: {
+                'type': 'artoolkitmarker.type',
+                'size': 'artoolkitmarker.size',
+                'url': 'artoolkitmarker.patternUrl',
+                'value': 'artoolkitmarker.barcodeValue',
+        }
+}));
