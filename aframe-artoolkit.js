@@ -29,7 +29,11 @@ AFRAME.registerSystem('artoolkit', {
 			// default: '4x4',
 			// default: '4x4_BCH_13_9_3',
 			// default: '4x4_BCH_13_5_5',
-		}
+		},
+		cameraParametersUrl : {
+			type: 'string',
+			default: 'data/camera_para.dat'
+		},
 	},
 	init: function () {
                 console.log('init system artoolkit')
@@ -171,7 +175,7 @@ AFRAME.registerSystem('artoolkit', {
         _onSourceReady: function(width, height, onCompleted){
                 var _this = this
                 console.log('AFRAME-ARTOOLKIT: _onSourceReady width', width, 'height', height)
-                _this.cameraParameters = new ARCameraParam('data/camera_para.dat', function() {
+                _this.cameraParameters = new ARCameraParam(_this.data.cameraParametersUrl, function() {
                 	// init controller
                         var arController = new ARController(width, height, _this.cameraParameters);
                         _this.arController = arController
