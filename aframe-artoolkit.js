@@ -180,8 +180,8 @@ AFRAME.registerSystem('artoolkit', {
 			}
 
 			// set projectionMatrix
-                        // var projectionMatrix = arController.getCameraMatrix();
-                        // _this.sceneEl.camera.projectionMatrix.fromArray(projectionMatrix);
+                        var projectionMatrix = arController.getCameraMatrix();
+                        _this.sceneEl.camera.projectionMatrix.fromArray(projectionMatrix);
 
 			// setPatternDetectionMode
 			var detectionModes = {
