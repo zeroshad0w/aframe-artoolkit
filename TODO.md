@@ -1,20 +1,17 @@
-- make good examples
-  - some WOW examples
-  - some exposing all the feature of the library
-    - various source: examples images/videos/webcam
-    - include various possible content: moving cube, minecraft
-    - various markers kanji/hiro/barcode
-    - allow to change the options with UI
-    - use usual context in url stuff
-- check this.data are correct. with data parse stuff
+- check this.data are correct. with schema parse stuff
 - init artoolkit source and load camera parameters in // in systems.init
-  
-- fix the no aspect update - ask fill
+  - fix the no aspect update - ask fill
 - import hatsune miku
 - interaction with the inspector ?
-- <a-marker type='pattern' url='data/patt.kanji'> if no type defined, but url is ? then default to pattern
-- <a-marker type='barcode' value=20'> if no type defined, but value is ? then default to barcode
+- if i move the camera based on the marker, and not the marker in space
+  - suddently it is possible to have kinda webvr, compatible with more scenes
+  - it become just a small code to paste on your scene
+  - it cant support multiple distinct marker
+  - <a-marker-controls>
+        <a-entity camera></a-entity>
+    </a-marker-controls>
 
+- DONE in examples/aframe-artoolkit.html add the debug/detectionMode/matrixCodeType system
 - DONE expose camera params url
   artoolkit='cameraParamsUrl: data/camera_para.dat'
 - DONE rename artoolkitsystem into artoolkit

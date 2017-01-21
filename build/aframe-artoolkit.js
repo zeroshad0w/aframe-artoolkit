@@ -29,7 +29,11 @@ AFRAME.registerSystem('artoolkit', {
 			// default: '4x4',
 			// default: '4x4_BCH_13_9_3',
 			// default: '4x4_BCH_13_5_5',
-		}
+		},
+		cameraParametersUrl : {
+			type: 'string',
+			default: 'data/camera_para.dat'
+		},
 	},
 	init: function () {
                 console.log('init system artoolkit')
@@ -71,7 +75,7 @@ AFRAME.registerSystem('artoolkit', {
                 this.srcElement = srcElement
                 this.srcElement.style.position = 'absolute'
                 this.srcElement.style.top = '0px'
-                this.srcElement.style.zIndex = '-1'
+                this.srcElement.style.zIndex = '-2'
         },
         _initSourceImage: function(onReady){
                 var srcElement = document.createElement('img')
@@ -171,7 +175,7 @@ AFRAME.registerSystem('artoolkit', {
         _onSourceReady: function(width, height, onCompleted){
                 var _this = this
                 console.log('AFRAME-ARTOOLKIT: _onSourceReady width', width, 'height', height)
-                _this.cameraParameters = new ARCameraParam('data/camera_para.dat', function() {
+                _this.cameraParameters = new ARCameraParam(_this.data.cameraParametersUrl, function() {
                 	// init controller
                         var arController = new ARController(width, height, _this.cameraParameters);
                         _this.arController = arController
@@ -182,6 +186,8 @@ AFRAME.registerSystem('artoolkit', {
 				arController.canvas.style.position = 'absolute'
 				arController.canvas.style.top = '0px'
 				arController.canvas.style.opacity = '0.6'
+				arController.canvas.style.pointerEvents = 'none'
+				arController.canvas.style.zIndex = '-1'
 			}
 
 			// set projectionMatrix
