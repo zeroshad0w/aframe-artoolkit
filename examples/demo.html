@@ -34,7 +34,7 @@
 	}
 	</style>
 	<div id='demoUITop'>
-		<label>Video Source :
+		<label title='the video source used by artoolkit'>Video Source :
 			<select id='videoSource'>
 			  <option value="webcam">webcam</option> 
 			  <option value="video_headtracking">video_headtracking</option>
@@ -47,7 +47,7 @@
 			</select>
 		</label>
 		<br/>
-		<label>Marker Content :
+		<label title='the content to add on top of the marker'>Marker Content :
 			<select id='markerContent'>
 			  <option value="cube">cube</option> 
 			  <option value="minecraft">minecraft</option>
@@ -55,7 +55,7 @@
 		</label>
 	</div>		
 	<div id='demoUIBottom'>
-		<label>Marker Type :
+		<label title='The type of marker detected'>Marker Type :
 			<select id='markerType'>
 			  <option value="hiro">hiro</option> 
 			  <option value="kanji">kanji</option>
@@ -64,14 +64,14 @@
 			</select>
 		</label>
 		<br/>
-		<label>debug :
+		<label title='enabled debug in artoolkit'>debug :
 			<select id='debug'>
 			  <option value="true">true</option> 
 			  <option value="false">false</option>
 			</select>
 		</label>
 		<br/>
-		<label>detectionMode :
+		<label title='type of marker detected by artoolkit'>detectionMode :
 			<select id='detectionMode'>
 			  <option value="color">color</option> 
 			  <option value="color_and_matrix">color_and_matrix</option> 
@@ -195,8 +195,7 @@
 			<a-entity geometry="primitive: torusKnot; radius: 0.3; radiusTubular: 0.05" position='0 0 0.5'>
 				<a-animation attribute="rotation" from="0 0 0" to="360 0 0" dur="5000" easing='linear' repeat="indefinite"></a-animation>
 			</a-entity>`			
-		}
-		if( options.markerContent === 'minecraft' ){
+		}else if( options.markerContent === 'minecraft' ){
 			sceneHtml += `<a-minecraft rotation="90 0 0" minecraft-body-anim='hiwave'></a-minecraft>`			
 		}
 		
