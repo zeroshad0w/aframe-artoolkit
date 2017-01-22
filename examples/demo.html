@@ -40,6 +40,10 @@
 			  <option value="video_headtracking">video_headtracking</option>
 			  <option value="video_output_4">video_output_4</option>
 			  <option value="image_armchair">image_armchair</option>
+			  <option value="image_chalk_multi">image_chalk_multi</option>
+			  <option value="image_chalk">image_chalk</option>
+			  <option value="image_img">image_img</option>
+			  <option value="image_kuva">image_kuva</option>
 			</select>
 		</label>
 		<br/>
@@ -90,11 +94,11 @@
 	<script>
 		// define options with default values
 		var options = {
-			videoSource : 'webcam',
-			markerType : 'hiro',
+			videoSource : 'image_armchair',
+			markerType : 'unknown',
 			markerContent : 'cube',
-			debug : 'true',
-			detectionMode : 'color_and_matrix',
+			debug : 'false',
+			detectionMode : 'mono_and_matrix',
 			matrixCodeType: '3x3'
 		}
 		// get options from the url
@@ -168,6 +172,10 @@
 		if( options.videoSource === 'video_headtracking' )	sceneHtml += " sourceType: video; sourceUrl:./videos/headtracking.mp4;"
 		if( options.videoSource === 'video_output_4' )		sceneHtml += " sourceType: video; sourceUrl:./videos/output_4.mp4;"
 		if( options.videoSource === 'image_armchair' )		sceneHtml += " sourceType: image; sourceUrl:./images/armchair.jpg;"
+		if( options.videoSource === 'image_chalk_multi' )	sceneHtml += " sourceType: image; sourceUrl:./images/chalk_multi.jpg;"
+		if( options.videoSource === 'image_chalk' )		sceneHtml += " sourceType: image; sourceUrl:./images/chalk.jpg;"
+		if( options.videoSource === 'image_img' )		sceneHtml += " sourceType: image; sourceUrl:./images/img.jpg;"
+		if( options.videoSource === 'image_kuva' )		sceneHtml += " sourceType: image; sourceUrl:./images/kuva.jpg;"
 
 		// honor options.debug
 		if( options.debug === 'true' )	sceneHtml += " debug: true"
@@ -190,7 +198,7 @@
 			</a-entity>`			
 		}
 		if( options.markerContent === 'minecraft' ){
-			sceneHtml += `<a-minecraft rotation="90 0 0"></a-minecraft>`			
+			sceneHtml += `<a-minecraft rotation="90 0 0" minecraft-body-anim='hiwave'></a-minecraft>`			
 		}
 		
 		// add the remaining to close the scene

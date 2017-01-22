@@ -91,11 +91,7 @@ AFRAME.registerSystem('artoolkit', {
                 var srcElement = document.createElement('img')
 		document.body.appendChild(srcElement)
 		srcElement.src = this.data.sourceUrl
-		// srcElement.src = './images/armchair.jpg'
-		// srcElement.src = './images/chalk.jpg'
-		// srcElement.src = './images/chalk_multi.jpg'
-		// srcElement.src = './images/kuva.jpg'
-		// srcElement.src = './images/img.jpg'
+
 		srcElement.width = 640
 		srcElement.height = 480
 
@@ -108,8 +104,7 @@ AFRAME.registerSystem('artoolkit', {
 		var srcElement = document.createElement('video');
 		document.body.appendChild(srcElement)
 		srcElement.src = this.data.sourceUrl
-		// srcElement.src = 'videos/output_4.mp4';
-		// srcElement.src = 'videos/headtracking.mp4';
+
 		srcElement.autoplay = true;
 		srcElement.webkitPlaysinline = true;
 		srcElement.controls = false;
@@ -348,13 +343,21 @@ AFRAME.registerComponent('artoolkitmarker', {
 				}
 
 				function updateMarker(){
-					markerRoot.matrix.fromArray(data.matrix)
+					// nice reference 
+					var modelViewMatrix = new THREE.Matrix4().fromArray(data.matrix)
+					// data.matrix is the model view matrix
+					markerRoot.matrix.copy(modelViewMatrix)
 					markerRoot.visible = true
+
+					// trying to implement
+					// var cameraTransformMatrix = new THREE.Matrix4().getInverse( modelViewMatrix )
+					// _this.sceneEl.camera.matrix.copy(cameraTransformMatrix)
 					
-					var position = new THREE.Vector3
-					var quaternion = new THREE.Quaternion
-					var scale = new THREE.Vector3
-					markerRoot.matrix.decompose(position, quaternion, scale)
+					// 
+					// var position = new THREE.Vector3
+					// var quaternion = new THREE.Quaternion
+					// var scale = new THREE.Vector3
+					// markerRoot.matrix.decompose(position, quaternion, scale)
 					// console.log('position', position)
 				}
 
