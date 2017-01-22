@@ -16,6 +16,7 @@ Here are the demos
 - [basic.html](https://jeromeetienne.github.io/aframe-artoolkit/examples/basic.html) 
 - [demo.html](https://jeromeetienne.github.io/aframe-artoolkit/examples/demo.html) 
 - [minecraft.html](https://jeromeetienne.github.io/aframe-artoolkit/examples/minecraft.html) 
+- [hatsune.html](https://jeromeetienne.github.io/aframe-artoolkit/examples/hatsune.html) 
 
 # Links
 - Augmented reality is about [understand the view matrix](http://www.3dgep.com/understanding-the-view-matrix/)
