@@ -1,8 +1,9 @@
-
 <!DOCTYPE html>
+<!-- include a-frame -->
 <script src="https://aframe.io/releases/0.4.0/aframe.min.js"></script>
+<!-- include aframe-artoolkit -->
 <script src="../build/aframe-artoolkit.js"></script>
-
+<!-- include minecraft -->
 <script src='vendor/threex.minecraft/a-frame/build/aframe-minecraft.min.js'></script>
 <script>THREEx.MinecraftChar.baseUrl = 'vendor/threex.minecraft/'</script>
 
@@ -16,14 +17,20 @@
 	#demoUITop {
 		position: absolute;
 		top: 0;
-		right: 0;
+		left: 0;
 		background-color: rgba(255,255,255,0.4);
+		padding: 10px;
 	}
 	#demoUIBottom {
 		position: absolute;
 		bottom: 0;
-		right: 0;
+		left: 0;
 		background-color: rgba(255,255,255,0.4);
+		padding: 10px;
+	}
+	.rs-base {	/* the aframe stat */
+		left : auto;
+		right: 20px;
 	}
 	</style>
 	<div id='demoUITop'>

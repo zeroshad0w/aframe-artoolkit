@@ -2,6 +2,7 @@
 - init artoolkit source and load camera parameters in // in systems.init
   - fix the no aspect update - ask fill
 - import hatsune miku
+- import md2 character
 - interaction with the inspector ?
 - if i move the camera based on the marker, and not the marker in space
   - suddently it is possible to have kinda webvr, compatible with more scenes
