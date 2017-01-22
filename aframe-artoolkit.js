@@ -12,23 +12,33 @@ AFRAME.registerSystem('artoolkit', {
                 },
                 sourceType : {
                         type: 'string',
-                        default: 'webcam',                       
+                        default: 'webcam',        
+			parse: function (value) {
+				var possibleValues = ['webcam', 'image', 'video' ]
+				console.assert(possibleValues.indexOf(value) !== -1, 'illegal value', value)
+				return value
+			}               
                 },
                 sourceUrl : {
                         type: 'string',
                 },
 		detectionMode : {
 			type: 'string',
-			default: 'color_and_matrix'
+			default: 'color_and_matrix',
+			parse: function (value) {	// check if the value is valid
+				var possibleValues = ['color', 'color_and_matrix', 'mono', 'mono_and_matrix' ]
+				console.assert(possibleValues.indexOf(value) !== -1, 'illegal value', value)
+				return value
+			}               
 		},
 		matrixCodeType : {
 			type: 'string',
 			default: '3x3',
-			// default: '3x3_HAMMING63',
-			// default: '3x3_PARITY65',
-			// default: '4x4',
-			// default: '4x4_BCH_13_9_3',
-			// default: '4x4_BCH_13_5_5',
+			parse: function (value) {	// check if the value is valid
+				var possibleValues = ['3x3', '3x3_HAMMING63', '3x3_PARITY65', '4x4', '4x4_BCH_13_9_3', '4x4_BCH_13_5_5' ]
+				console.assert(possibleValues.indexOf(value) !== -1, 'illegal value', value)
+				return value
+			}               
 		},
 		cameraParametersUrl : {
 			type: 'string',
@@ -270,7 +280,12 @@ AFRAME.registerComponent('artoolkitmarker', {
 		},
 		type: {
 			type: 'string',
-			default : 'unknown'
+			default : 'unknown',
+			parse: function (value) {	// check if the value is valid
+				var possibleValues = ['pattern', 'barcode', 'unknown' ]
+				console.assert(possibleValues.indexOf(value) !== -1, 'illegal value', value)
+				return value
+			}               
 		},
 		patternUrl: {
 			type: 'string',
@@ -344,7 +359,7 @@ AFRAME.registerComponent('artoolkitmarker', {
 				}
 
 			})
-		}, 1000/10)
+		}, 1000/50)
 	},
 	remove : function(){
 		var artoolkitsystem = this.el.sceneEl.systems.artoolkit

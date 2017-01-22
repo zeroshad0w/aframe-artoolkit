@@ -1,4 +1,3 @@
-- check this.data are correct. with schema parse stuff
 - init artoolkit source and load camera parameters in // in systems.init
   - fix the no aspect update - ask fill
 - import hatsune miku
@@ -12,6 +11,7 @@
         <a-entity camera></a-entity>
     </a-marker-controls>
 
+- DONE check this.data are correct. with schema parse stuff
 - DONE in examples/aframe-artoolkit.html add the debug/detectionMode/matrixCodeType system
 - DONE expose camera params url
   artoolkit='cameraParamsUrl: data/camera_para.dat'
