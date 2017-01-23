@@ -3,11 +3,38 @@ Augmented reality for a-frame
 
 API in a-frame
 
-```
+```html
+<!-- add artoolkit into your scene -->
 <a-scene artoolkit>
+        <!-- define a marker -->
         <a-marker>
+                <!-- define the content to be displayed on top of the marker -->
                 <a-cube>
         </a-marker>
+        <!-- define a simple camera -->
+        <a-entity camera></a-entity>
+</a-scene>
+```
+
+# <a-artoolkit-camera>
+Usually the model used in augmented reality is about changing the modelViewMatrix 
+based on the marker position. the camera being static in 0,0,0 looking toward negative z.
+
+We define as well a model where we move the camera, instead of the object.
+It changes the camera transform matrix.
+This cameraTransform mode seems more instinctive than the modelView mode.
+cameraTransform would fit well a room-scale setup, with *multiple markers connected to each other*.
+modelView is able to provide multiple *independant* markers.
+
+```html
+<!-- add artoolkit into your scene -->
+<a-scene artoolkit>
+        <!-- define your scene as usual -->
+        <a-cube>
+        <!-- define a camera inside the <a-marker-camera> -->
+        <a-marker-camera>
+                <a-entity camera></a-entity>
+        <a-marker-camera>
 </a-scene>
 ```
 

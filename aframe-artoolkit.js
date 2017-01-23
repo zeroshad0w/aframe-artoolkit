@@ -238,11 +238,12 @@ AFRAME.registerSystem('artoolkit', {
                 var arController = this.arController
                 if (!arController) return;
 
-		// mark all markers to invisible
+		// mark all markers to invisible before processing this frame
 		this._markerElements.forEach(function(markerElement){
 			markerElement.el.object3D.visible = false
 		})
 
+		// process this frame
 		arController.process(this.srcElement)
 	},
 
@@ -391,6 +392,20 @@ AFRAME.registerComponent('artoolkitmarker', {
 AFRAME.registerPrimitive('a-marker', AFRAME.utils.extendDeep({}, AFRAME.primitives.getMeshMixin(), {
         defaultComponents: {
                 artoolkitmarker: {},
+        },
+        mappings: {
+                'type': 'artoolkitmarker.type',
+                'size': 'artoolkitmarker.size',
+                'url': 'artoolkitmarker.patternUrl',
+                'value': 'artoolkitmarker.barcodeValue',
+        }
+}));
+
+AFRAME.registerPrimitive('a-marker-camera', AFRAME.utils.extendDeep({}, AFRAME.primitives.getMeshMixin(), {
+        defaultComponents: {
+                artoolkitmarker: {
+			changeMatrixMode: 'cameraTransformMatrix'
+		},
         },
         mappings: {
                 'type': 'artoolkitmarker.type',
