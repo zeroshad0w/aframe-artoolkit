@@ -15,9 +15,15 @@ API in a-frame
 Here are the demos
 
 - [basic.html](https://jeromeetienne.github.io/aframe-artoolkit/examples/basic.html) 
+basic minimal examples. Good to get started
 - [demo.html](https://jeromeetienne.github.io/aframe-artoolkit/examples/demo.html) 
-- [minecraft.html](https://jeromeetienne.github.io/aframe-artoolkit/examples/minecraft.html) 
+shows you all the possibilities of aframe-artoolkit. You can play around
+- [marker-camera.html](https://jeromeetienne.github.io/aframe-artoolkit/examples/marker-camera.html):
+Move the camera instead of using the usual "camera looking toward negative-z and modelViewMatrix"
+- [minecraft.html](https://jeromeetienne.github.io/aframe-artoolkit/examples/minecraft.html): 
+include a minecraft on the marker
 - [hatsune.html](https://jeromeetienne.github.io/aframe-artoolkit/examples/hatsune.html) 
+include a hatsune miku on the marker
 
 # Links
 

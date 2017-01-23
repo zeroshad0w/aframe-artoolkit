@@ -1,6 +1,3 @@
-- import hatsune miku
-- import md2 character
-- interaction with the inspector ?
 - support a-marker-camera
   - if i the camera based on the marker, and not the marker in space
   - <a-marker-camera>
@@ -11,6 +8,13 @@
   - it cant support multiple distinct marker
   - more WebVR still
   - add it as an primitive so it is compatible with the rest of aframe-artoolkit
+
+- import hatsune miku
+  - copy hatsune files on repo
+- import md2 character
+  - there is a threex md2character already
+  - update it with other characters and new three.js
+- interaction with the inspector ?
 
 - init artoolkit source and load camera parameters in // in systems.init
   - fix the no aspect update - ask phill

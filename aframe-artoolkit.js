@@ -288,6 +288,15 @@ AFRAME.registerComponent('artoolkitmarker', {
 		barcodeValue: {
 			type: 'number'
 		},
+		changeMatrixMode: {
+			type: 'string',
+			default : 'modelViewMatrix',
+			parse: function (value) {	// check if the value is valid
+				var possibleValues = ['modelViewMatrix', 'cameraTransformMatrix' ]
+				console.assert(possibleValues.indexOf(value) !== -1, 'illegal value', value)
+				return value
+			},
+		}
 	},
 	init: function () {
 		var _this = this
@@ -343,22 +352,19 @@ AFRAME.registerComponent('artoolkitmarker', {
 				}
 
 				function updateMarker(){
-					// nice reference 
-					var modelViewMatrix = new THREE.Matrix4().fromArray(data.matrix)
 					// data.matrix is the model view matrix
-					markerRoot.matrix.copy(modelViewMatrix)
+					var modelViewMatrix = new THREE.Matrix4().fromArray(data.matrix)
+
 					markerRoot.visible = true
 
-					// trying to implement
-					// var cameraTransformMatrix = new THREE.Matrix4().getInverse( modelViewMatrix )
-					// _this.sceneEl.camera.matrix.copy(cameraTransformMatrix)
-					
-					// 
-					// var position = new THREE.Vector3
-					// var quaternion = new THREE.Quaternion
-					// var scale = new THREE.Vector3
-					// markerRoot.matrix.decompose(position, quaternion, scale)
-					// console.log('position', position)
+					if( _this.data.changeMatrixMode === 'modelViewMatrix' ){
+						markerRoot.matrix.copy(modelViewMatrix)						
+					}else if( _this.data.changeMatrixMode === 'cameraTransformMatrix' ){
+						var cameraTransformMatrix = new THREE.Matrix4().getInverse( modelViewMatrix )
+						markerRoot.matrix.copy(cameraTransformMatrix)						
+					}else {
+						console.assert(false)
+					}
 				}
 
 			})
@@ -372,6 +378,7 @@ AFRAME.registerComponent('artoolkitmarker', {
 		// unloadMaker ???
 	},
 	update: function () {
+		// FIXME this mean to change the recode in trackBarcodeMarkerId ?
         	// var markerRoot = this.el.object3D;
         	// markerRoot.userData.size = this.data.size;
 	},

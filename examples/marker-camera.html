@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<script src="vendor/aframe.min.js"></script>
+<!-- jsartookit -->
+<script src="../vendor/jsartoolkit/artoolkit.debug.js"></script>
+<script src="../vendor/jsartoolkit/artoolkit.api.js"></script>
+<!-- aframe-artoolkit -->
+<script src="../aframe-artoolkit.js"></script>
+
+<body style='margin:0px'><div style='width:640px; height:480px;' id='scene-container'>
+	<a-scene embedded artoolkit='sourceType: image; sourceUrl:./images/armchair.jpg;'>
+
+		<a-sphere position="0 0.0 0.5" radius="0.5" color="#EF2D5E"></a-sphere>
+		<a-plane position="0 0 0" rotation="0 0 0" width="1" height="1" color="#7BC8A4"></a-plane>
+
+		<a-entity artoolkitmarker='changeMatrixMode: cameraTransformMatrix'>
+			<a-entity camera></a-entity>
+		</a-entity>
+	</a-scene>
+</div></body>
+</html>
