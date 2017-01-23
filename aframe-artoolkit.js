@@ -306,7 +306,6 @@ AFRAME.registerComponent('artoolkitmarker', {
                 // create the marker Root
         	var markerRoot = this.el.object3D;
         	markerRoot.name = 'Marker Root'
-        	markerRoot.userData.markerMatrix = new Float64Array(12);
         	markerRoot.matrixAutoUpdate = false;
         	markerRoot.visible = true
 
@@ -314,6 +313,7 @@ AFRAME.registerComponent('artoolkitmarker', {
 		var artoolkitsystem = this.el.sceneEl.systems.artoolkit
 		artoolkitsystem.addMarker(this)
 		
+		// wait for arController to be initialized before going on with the init
 		var delayedInitTimerId = setInterval(function(){
 			// check if arController is init
 			var artoolkitsystem = _this.el.sceneEl.systems.artoolkit
@@ -322,55 +322,62 @@ AFRAME.registerComponent('artoolkitmarker', {
 			// stop looping if it is init
 			clearInterval(delayedInitTimerId)
 			delayedInitTimerId = null
-
-			// start tracking this pattern
-			if( _this.data.type === 'pattern' ){
-	                        arController.loadMarker(_this.data.patternUrl, function(markerId) {
-					_this.markerId = markerId
-	                                arController.trackPatternMarkerId(_this.markerId, _this.data.size);
-	                        });				
-			}else if( _this.data.type === 'barcode' ){
-				_this.markerId = _this.data.barcodeValue
-				arController.trackBarcodeMarkerId(this.markerId, _this.data.size);
-			}else if( _this.data.type === 'unknown' ){
-				_this.markerId = null
-			}else{
-				console.log(false, 'invalid data type', _this.data.type)
-			}
-
-			// listen to the event 
-			arController.addEventListener('getMarker', function(event){
-				var data = event.data
-				if( data.type === artoolkit.PATTERN_MARKER && _this.data.type === 'pattern' ){
-					if( _this.markerId === null )	return
-					if( data.marker.idPatt === _this.markerId ) updateMarker()
-				}else if( data.type === artoolkit.BARCODE_MARKER && _this.data.type === 'barcode' ){
-					// console.log('BARCODE_MARKER idMatrix', data.marker.idMatrix, _this.markerId )
-					if( _this.markerId === null )	return
-					if( data.marker.idMatrix === _this.markerId )  updateMarker()
-				}else if( data.type === artoolkit.UNKNOWN_MARKER && _this.data.type === 'unknown'){
-					updateMarker()
-				}
-
-				function updateMarker(){
-					// data.matrix is the model view matrix
-					var modelViewMatrix = new THREE.Matrix4().fromArray(data.matrix)
-
-					markerRoot.visible = true
-
-					if( _this.data.changeMatrixMode === 'modelViewMatrix' ){
-						markerRoot.matrix.copy(modelViewMatrix)						
-					}else if( _this.data.changeMatrixMode === 'cameraTransformMatrix' ){
-						var cameraTransformMatrix = new THREE.Matrix4().getInverse( modelViewMatrix )
-						markerRoot.matrix.copy(cameraTransformMatrix)						
-					}else {
-						console.assert(false)
-					}
-				}
-
-			})
+			// launch the _postInit
+			_this._postInit()
 		}, 1000/50)
 	},
+	_postInit : function(){		
+		// check if arController is init
+		var artoolkitsystem = _this.el.sceneEl.systems.artoolkit
+		var arController = artoolkitsystem.arController
+		console.assert(arController !== null )
+
+		// start tracking this pattern
+		if( _this.data.type === 'pattern' ){
+                        arController.loadMarker(_this.data.patternUrl, function(markerId) {
+				_this.markerId = markerId
+                                arController.trackPatternMarkerId(_this.markerId, _this.data.size);
+                        });				
+		}else if( _this.data.type === 'barcode' ){
+			_this.markerId = _this.data.barcodeValue
+			arController.trackBarcodeMarkerId(this.markerId, _this.data.size);
+		}else if( _this.data.type === 'unknown' ){
+			_this.markerId = null
+		}else{
+			console.log(false, 'invalid data type', _this.data.type)
+		}
+
+		// listen to the event 
+		arController.addEventListener('getMarker', function(event){
+			var data = event.data
+			if( data.type === artoolkit.PATTERN_MARKER && _this.data.type === 'pattern' ){
+				if( _this.markerId === null )	return
+				if( data.marker.idPatt === _this.markerId ) updateMarker()
+			}else if( data.type === artoolkit.BARCODE_MARKER && _this.data.type === 'barcode' ){
+				// console.log('BARCODE_MARKER idMatrix', data.marker.idMatrix, _this.markerId )
+				if( _this.markerId === null )	return
+				if( data.marker.idMatrix === _this.markerId )  updateMarker()
+			}else if( data.type === artoolkit.UNKNOWN_MARKER && _this.data.type === 'unknown'){
+				updateMarker()
+			}
+
+			function updateMarker(){
+				// data.matrix is the model view matrix
+				var modelViewMatrix = new THREE.Matrix4().fromArray(data.matrix)
+
+				markerRoot.visible = true
+
+				if( _this.data.changeMatrixMode === 'modelViewMatrix' ){
+					markerRoot.matrix.copy(modelViewMatrix)						
+				}else if( _this.data.changeMatrixMode === 'cameraTransformMatrix' ){
+					var cameraTransformMatrix = new THREE.Matrix4().getInverse( modelViewMatrix )
+					markerRoot.matrix.copy(cameraTransformMatrix)						
+				}else {
+					console.assert(false)
+				}
+			}
+		})
+	}
 	remove : function(){
 		var artoolkitsystem = this.el.sceneEl.systems.artoolkit
 		artoolkitsystem.removeMarker(this)
@@ -386,7 +393,7 @@ AFRAME.registerComponent('artoolkitmarker', {
 });
 
 //////////////////////////////////////////////////////////////////////////////
-//                Code Separator
+//                define some primitives shortcuts
 //////////////////////////////////////////////////////////////////////////////
 
 AFRAME.registerPrimitive('a-marker', AFRAME.utils.extendDeep({}, AFRAME.primitives.getMeshMixin(), {
