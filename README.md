@@ -1,8 +1,6 @@
 # aframe-artoolkit
 Augmented reality for a-frame
 
-API in a-frame
-
 ```html
 <!-- add artoolkit into your scene -->
 <a-scene artoolkit>
@@ -15,6 +13,23 @@ API in a-frame
         <a-entity camera></a-entity>
 </a-scene>
 ```
+
+# Show, Don't Tell
+Here are the demos
+
+- [basic.html](https://jeromeetienne.github.io/aframe-artoolkit/examples/basic.html) 
+basic minimal examples. Good to get started
+- [demo.html](https://jeromeetienne.github.io/aframe-artoolkit/examples/demo.html) 
+shows you all the possibilities of aframe-artoolkit. You can play around
+- [marker-camera.html](https://jeromeetienne.github.io/aframe-artoolkit/examples/marker-camera.html):
+Move the camera instead of using the usual "camera looking toward negative-z and modelViewMatrix"
+- [multiple-independant-maker.html](https://jeromeetienne.github.io/aframe-artoolkit/examples/multiple-independant-maker.html):
+Handle multiple indepant markers in a single scene.
+- [minecraft.html](https://jeromeetienne.github.io/aframe-artoolkit/examples/minecraft.html): 
+include a minecraft on the marker
+- [hatsune.html](https://jeromeetienne.github.io/aframe-artoolkit/examples/hatsune.html) 
+include a hatsune miku on the marker
+
 
 # <a-artoolkit-camera>
 Usually the model used in augmented reality is about changing the modelViewMatrix 
@@ -37,20 +52,6 @@ modelView is able to provide multiple *independant* markers.
         <a-marker-camera>
 </a-scene>
 ```
-
-# Show, Don't Tell
-Here are the demos
-
-- [basic.html](https://jeromeetienne.github.io/aframe-artoolkit/examples/basic.html) 
-basic minimal examples. Good to get started
-- [demo.html](https://jeromeetienne.github.io/aframe-artoolkit/examples/demo.html) 
-shows you all the possibilities of aframe-artoolkit. You can play around
-- [marker-camera.html](https://jeromeetienne.github.io/aframe-artoolkit/examples/marker-camera.html):
-Move the camera instead of using the usual "camera looking toward negative-z and modelViewMatrix"
-- [minecraft.html](https://jeromeetienne.github.io/aframe-artoolkit/examples/minecraft.html): 
-include a minecraft on the marker
-- [hatsune.html](https://jeromeetienne.github.io/aframe-artoolkit/examples/hatsune.html) 
-include a hatsune miku on the marker
 
 # Links
 

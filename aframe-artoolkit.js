@@ -327,8 +327,10 @@ AFRAME.registerComponent('artoolkitmarker', {
 		}, 1000/50)
 	},
 	_postInit : function(){		
+		var markerRoot = this.el.object3D;
+		var _this = this
 		// check if arController is init
-		var artoolkitsystem = _this.el.sceneEl.systems.artoolkit
+		var artoolkitsystem = this.el.sceneEl.systems.artoolkit
 		var arController = artoolkitsystem.arController
 		console.assert(arController !== null )
 
@@ -340,7 +342,7 @@ AFRAME.registerComponent('artoolkitmarker', {
                         });				
 		}else if( _this.data.type === 'barcode' ){
 			_this.markerId = _this.data.barcodeValue
-			arController.trackBarcodeMarkerId(this.markerId, _this.data.size);
+			arController.trackBarcodeMarkerId(_this.markerId, _this.data.size);
 		}else if( _this.data.type === 'unknown' ){
 			_this.markerId = null
 		}else{
@@ -352,16 +354,16 @@ AFRAME.registerComponent('artoolkitmarker', {
 			var data = event.data
 			if( data.type === artoolkit.PATTERN_MARKER && _this.data.type === 'pattern' ){
 				if( _this.markerId === null )	return
-				if( data.marker.idPatt === _this.markerId ) updateMarker()
+				if( data.marker.idPatt === _this.markerId ) onMarkerFound()
 			}else if( data.type === artoolkit.BARCODE_MARKER && _this.data.type === 'barcode' ){
 				// console.log('BARCODE_MARKER idMatrix', data.marker.idMatrix, _this.markerId )
 				if( _this.markerId === null )	return
-				if( data.marker.idMatrix === _this.markerId )  updateMarker()
+				if( data.marker.idMatrix === _this.markerId )  onMarkerFound()
 			}else if( data.type === artoolkit.UNKNOWN_MARKER && _this.data.type === 'unknown'){
-				updateMarker()
+				onMarkerFound()
 			}
 
-			function updateMarker(){
+			function onMarkerFound(){
 				// data.matrix is the model view matrix
 				var modelViewMatrix = new THREE.Matrix4().fromArray(data.matrix)
 
@@ -377,7 +379,7 @@ AFRAME.registerComponent('artoolkitmarker', {
 				}
 			}
 		})
-	}
+	},
 	remove : function(){
 		var artoolkitsystem = this.el.sceneEl.systems.artoolkit
 		artoolkitsystem.removeMarker(this)
