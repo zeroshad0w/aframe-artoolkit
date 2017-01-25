@@ -31,7 +31,7 @@ include a minecraft on the marker
 include a hatsune miku on the marker
 
 
-# <a-artoolkit-camera>
+# <a-marker-camera>
 Usually the model used in augmented reality is about changing the modelViewMatrix 
 based on the marker position. the camera being static in 0,0,0 looking toward negative z.
 
