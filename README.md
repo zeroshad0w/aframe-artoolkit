@@ -23,7 +23,7 @@ basic minimal examples. Good to get started
 shows you all the possibilities of aframe-artoolkit. You can play around
 - [marker-camera.html](https://jeromeetienne.github.io/aframe-artoolkit/examples/marker-camera.html):
 Move the camera instead of using the usual "camera looking toward negative-z and modelViewMatrix"
-- [multiple-independant-makers.html](https://jeromeetienne.github.io/aframe-artoolkit/examples/multiple-independant-makers.html):
+- [multiple-independant-markers.html](https://jeromeetienne.github.io/aframe-artoolkit/examples/multiple-independant-markers.html):
 Handle multiple indepant markers in a single scene.
 - [minecraft.html](https://jeromeetienne.github.io/aframe-artoolkit/examples/minecraft.html): 
 include a minecraft on the marker
