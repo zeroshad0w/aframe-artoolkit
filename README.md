@@ -55,6 +55,7 @@ modelView is able to provide multiple *independant* markers.
 
 # Links
 
+- [slides about aframe-artoolkit](http://jeromeetienne.github.io/slides/artoolkit-aframe/)
 - Augmented reality is about [understand the view matrix](http://www.3dgep.com/understanding-the-view-matrix/)
 - [jsartoolkit5](https://github.com/artoolkit/jsartoolkit5)
 - [artoolkit5](https://github.com/artoolkit/artoolkit5/)
