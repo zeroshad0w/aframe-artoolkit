@@ -1,11 +1,10 @@
 <!DOCTYPE html>
-<head>
-	<script src="https://jeromeetienne.github.io/vendor/aframe.min.js"></script>
-	<script src="https://jeromeetienne.github.io/aframe-artoolkit/build/aframe-artoolkit.js"></script>
-</head>
+<script src="vendor/aframe.min.js"></script>
+<script src="../build/aframe-artoolkit.js"></script>
 <body style='margin:0px'><div style='width:640px; height:480px;' id='scene-container'>
 	<!-- enable artoolkit on this scene -->
-	<a-scene embedded artoolkit='sourceType: image; sourceUrl:https://jeromeetienne.github.io/aframe-artoolkit/examples/images/armchair.jpg;'>
+	<a-scene embedded artoolkit='sourceType: image; sourceUrl:./images/armchair.jpg;'>
+	<!-- <a-scene embedded artoolkit='sourceType: webcam;'> -->
 		<!-- define a marker -->
 		<a-marker>
 			<!-- define the object which gonna be put on this marker  -->

@@ -1,11 +1,23 @@
 var THREEx = THREEx || {}
 
-THREEx.ArToolkitMarker = function(context, object3d, data){
+THREEx.ArToolkitMarker = function(context, object3d, parameters){
 	var _this = this
 	this.context = context
-	this.data = data
+	// handle default parameters
+	this.parameters = {
+		size : parameters.debug !== undefined ? parameters.debug : 1,
+		type : parameters.type !== undefined ? parameters.type : 'unknown',
+		patternUrl : parameters.patternUrl !== undefined ? parameters.patternUrl : null,
+		barcodeValue : parameters.barcodeValue !== undefined ? parameters.barcodeValue : null,
+		changeMatrixMode : parameters.changeMatrixMode !== undefined ? parameters.changeMatrixMode : 'modelViewMatrix',
+	}
 
-	var _this = this
+	// sanity check
+	var possibleValues = ['pattern', 'barcode', 'unknown' ]
+	console.assert(possibleValues.indexOf(this.parameters.type) !== -1, 'illegal value', this.parameters.type)
+	var possibleValues = ['modelViewMatrix', 'cameraTransformMatrix' ]
+	console.assert(possibleValues.indexOf(this.parameters.changeMatrixMode) !== -1, 'illegal value', this.parameters.changeMatrixMode)
+
 	this.markerId = null
 
         // create the marker Root
@@ -40,51 +52,48 @@ THREEx.ArToolkitMarker.prototype._postInit = function(){
 	console.assert(arController !== null )
 
 	// start tracking this pattern
-	if( _this.data.type === 'pattern' ){
-                arController.loadMarker(_this.data.patternUrl, function(markerId) {
+	if( _this.parameters.type === 'pattern' ){
+                arController.loadMarker(_this.parameters.patternUrl, function(markerId) {
 			_this.markerId = markerId
-                        arController.trackPatternMarkerId(_this.markerId, _this.data.size);
+                        arController.trackPatternMarkerId(_this.markerId, _this.parameters.size);
                 });				
-	}else if( _this.data.type === 'barcode' ){
-		_this.markerId = _this.data.barcodeValue
-		arController.trackBarcodeMarkerId(_this.markerId, _this.data.size);
-	}else if( _this.data.type === 'unknown' ){
+	}else if( _this.parameters.type === 'barcode' ){
+		_this.markerId = _this.parameters.barcodeValue
+		arController.trackBarcodeMarkerId(_this.markerId, _this.parameters.size);
+	}else if( _this.parameters.type === 'unknown' ){
 		_this.markerId = null
 	}else{
-		console.log(false, 'invalid data type', _this.data.type)
+		console.log(false, 'invalid marker type', _this.parameters.type)
 	}
 
 	// listen to the event 
 	arController.addEventListener('getMarker', function(event){
-		var data = event.data
-		if( data.type === artoolkit.PATTERN_MARKER && _this.data.type === 'pattern' ){
+		if( event.data.type === artoolkit.PATTERN_MARKER && _this.parameters.type === 'pattern' ){
 			if( _this.markerId === null )	return
-			if( data.marker.idPatt === _this.markerId ) onMarkerFound()
-		}else if( data.type === artoolkit.BARCODE_MARKER && _this.data.type === 'barcode' ){
-			// console.log('BARCODE_MARKER idMatrix', data.marker.idMatrix, _this.markerId )
+			if( event.data.marker.idPatt === _this.markerId ) onMarkerFound()
+		}else if( event.data.type === artoolkit.BARCODE_MARKER && _this.parameters.type === 'barcode' ){
+			// console.log('BARCODE_MARKER idMatrix', event.data.marker.idMatrix, _this.markerId )
 			if( _this.markerId === null )	return
-			if( data.marker.idMatrix === _this.markerId )  onMarkerFound()
-		}else if( data.type === artoolkit.UNKNOWN_MARKER && _this.data.type === 'unknown'){
+			if( event.data.marker.idMatrix === _this.markerId )  onMarkerFound()
+		}else if( event.data.type === artoolkit.UNKNOWN_MARKER && _this.parameters.type === 'unknown'){
 			onMarkerFound()
 		}
 
 		function onMarkerFound(){
 			// data.matrix is the model view matrix
-			var modelViewMatrix = new THREE.Matrix4().fromArray(data.matrix)
-console.log('onMarkerFound', data.matrix)
+			var modelViewMatrix = new THREE.Matrix4().fromArray(event.data.matrix)
 			markerRoot.visible = true
 
-			if( _this.data.changeMatrixMode === 'modelViewMatrix' ){
+			if( _this.parameters.changeMatrixMode === 'modelViewMatrix' ){
 				markerRoot.matrix.copy(modelViewMatrix)						
-			}else if( _this.data.changeMatrixMode === 'cameraTransformMatrix' ){
+			}else if( _this.parameters.changeMatrixMode === 'cameraTransformMatrix' ){
 				var cameraTransformMatrix = new THREE.Matrix4().getInverse( modelViewMatrix )
 				markerRoot.matrix.copy(cameraTransformMatrix)						
 			}else {
 				console.assert(false)
 			}
-			// TODO decompose the matrix into .position, .quaternion, scale
+			// decompose the matrix into .position, .quaternion, scale
 			markerRoot.matrix.decompose(markerRoot.position, markerRoot.quaternion, markerRoot.scale)
-			console.log('children', markerRoot.children)
 		}
 	})
 }

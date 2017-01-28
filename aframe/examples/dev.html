@@ -1,17 +1,17 @@
 <!DOCTYPE html>
 <script src="vendor/aframe.min.js"></script>
 <!-- jsartookit -->
-<script src="../vendor/jsartoolkit/artoolkit.debug.js"></script>
-<script src="../vendor/jsartoolkit/artoolkit.api.js"></script>
+<script src="../../vendor/jsartoolkit/artoolkit.debug.js"></script>
+<script src="../../vendor/jsartoolkit/artoolkit.api.js"></script>
 <!-- aframe-artoolkit -->
 <script src="../aframe-artoolkit.js"></script>
-
-<script src="../threex-artoolkitcontext.js"></script>
-<script src="../threex-artoolkitmarker.js"></script>
+<!-- include threex.artoolkit -->
+<script src="../../vendor/threex-artoolkitcontext.js"></script>
+<script src="../../vendor/threex-artoolkitmarker.js"></script>
 
 <body style='margin:0px'><div style='width:640px; height:480px;' id='scene-container'>
-	<a-scene embedded artoolkit='sourceType: video; sourceUrl:./videos/headtracking.mp4;'>
-	<!-- <a-scene embedded artoolkit='sourceType: image; sourceUrl:./images/armchair.jpg;'> -->
+	<!-- <a-scene embedded artoolkit='sourceType: video; sourceUrl:./videos/headtracking.mp4;'> -->
+	<a-scene embedded artoolkit='sourceType: image; sourceUrl:./images/armchair.jpg;'>
 	<!-- <a-scene artoolkit='sourceType: image; sourceUrl:./images/screenshot.png'> -->
 
 		<a-marker type='unknown'>

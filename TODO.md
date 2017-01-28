@@ -1,4 +1,9 @@
+
+
+
 - make it run in codepen
+  - issue with cors
+  - https://codepen.io/jeromeetienne/pen/mRqqzb?editors=1000#0
   
 - import hatsune miku
   - copy hatsune files on repo

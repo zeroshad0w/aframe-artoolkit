@@ -1,17 +1,16 @@
 var THREEx = THREEx || {}
 
-THREEx.ArToolkitContext = function(data){
+THREEx.ArToolkitContext = function(parameters){
 	var _this = this
-	// TODO to rename .parameters 
-	// this.data = {
-	// 	debug: true,
-	// 	sourceType : 'webcam',
-	// 	sourceUrl : null,
-	// 	detectionMode: 'color_and_matrix',
-	// 	matrixCodeType: '3x3',
-	// 	cameraParametersUrl: THREEx.ArToolkitContext.baseURL + 'data/camera_para.dat',
-	// }
-	this.data = data
+	// handle default parameters
+	this.parameters = {
+		debug: parameters.debug !== undefined ? parameters.debug : true,
+		sourceType : parameters.sourceType !== undefined ? parameters.sourceType : 'webcam',
+		sourceUrl : parameters.sourceUrl !== undefined ? parameters.sourceUrl : null,
+		detectionMode: parameters.detectionMode !== undefined ? parameters.detectionMode : 'color_and_matrix',
+		matrixCodeType: parameters.matrixCodeType !== undefined ? parameters.matrixCodeType : '3x3',
+		cameraParametersUrl: parameters.cameraParametersUrl !== undefined ? parameters.cameraParametersUrl : THREEx.ArToolkitContext.baseURL + 'parameters/camera_para.dat',
+	}
 	
         this.srcElement = null
         this.arController = null;
@@ -28,15 +27,15 @@ THREEx.ArToolkitContext = function(data){
 THREEx.ArToolkitContext.baseURL = '../'
 
 THREEx.ArToolkitContext.prototype._initSource = function(onReady) {
-        if( this.data.sourceType === 'image' ){
+        if( this.parameters.sourceType === 'image' ){
                 var srcElement = this._initSourceImage(function(){
                         onReady(srcElement.width, srcElement.height)
                 })                        
-        }else if( this.data.sourceType === 'video' ){
+        }else if( this.parameters.sourceType === 'video' ){
                 var srcElement = this._initSourceVideo(function(){
                         onReady(srcElement.width, srcElement.height)
                 })                        
-        }else if( this.data.sourceType === 'webcam' ){
+        }else if( this.parameters.sourceType === 'webcam' ){
                 var srcElement = this._initSourceWebcam(function(){
                         onReady(srcElement.videoWidth, srcElement.videoHeight)
                 })                        
@@ -54,7 +53,7 @@ THREEx.ArToolkitContext.prototype._initSourceImage = function(onReady) {
 	// TODO make it static
         var srcElement = document.createElement('img')
 	document.body.appendChild(srcElement)
-	srcElement.src = this.data.sourceUrl
+	srcElement.src = this.parameters.sourceUrl
 
 	srcElement.width = 640
 	srcElement.height = 480
@@ -69,7 +68,7 @@ THREEx.ArToolkitContext.prototype._initSourceVideo = function(onReady) {
 	// TODO make it static
 	var srcElement = document.createElement('video');
 	document.body.appendChild(srcElement)
-	srcElement.src = this.data.sourceUrl
+	srcElement.src = this.parameters.sourceUrl
 
 	srcElement.autoplay = true;
 	srcElement.webkitPlaysinline = true;
@@ -148,13 +147,13 @@ THREEx.ArToolkitContext.prototype._initSourceWebcam = function(onReady) {
 THREEx.ArToolkitContext.prototype._onSourceReady = function(width, height, onCompleted){
         var _this = this
         console.log('ArToolkitContext: _onSourceReady width', width, 'height', height)
-        _this.cameraParameters = new ARCameraParam(_this.data.cameraParametersUrl, function() {
+        _this.cameraParameters = new ARCameraParam(_this.parameters.cameraParametersUrl, function() {
         	// init controller
                 var arController = new ARController(width, height, _this.cameraParameters);
                 _this.arController = arController
                 
-		// honor this.data.debug
-                if( _this.data.debug === true ){
+		// honor this.parameters.debug
+                if( _this.parameters.debug === true ){
 			arController.debugSetup();
 			arController.canvas.style.position = 'absolute'
 			arController.canvas.style.top = '0px'
@@ -177,7 +176,7 @@ THREEx.ArToolkitContext.prototype._onSourceReady = function(width, height, onCom
 			'mono'			: artoolkit.AR_TEMPLATE_MATCHING_MONO,
 			'mono_and_matrix'	: artoolkit.AR_TEMPLATE_MATCHING_MONO_AND_MATRIX,
 		}
-		var detectionMode = detectionModes[_this.data.detectionMode]
+		var detectionMode = detectionModes[_this.parameters.detectionMode]
 		console.assert(detectionMode !== undefined)
 		arController.setPatternDetectionMode(detectionMode);
 
@@ -190,7 +189,7 @@ THREEx.ArToolkitContext.prototype._onSourceReady = function(width, height, onCom
 			'4x4_BCH_13_9_3': artoolkit.AR_MATRIX_CODE_4x4_BCH_13_9_3,
 			'4x4_BCH_13_5_5': artoolkit.AR_MATRIX_CODE_4x4_BCH_13_5_5,
 		}
-		var matrixCodeType = matrixCodeTypes[_this.data.matrixCodeType]
+		var matrixCodeType = matrixCodeTypes[_this.parameters.matrixCodeType]
 		console.assert(matrixCodeType !== undefined)
 		arController.setMatrixCodeType(matrixCodeType);
 
