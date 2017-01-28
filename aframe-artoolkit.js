@@ -377,6 +377,8 @@ AFRAME.registerComponent('artoolkitmarker', {
 				}else {
 					console.assert(false)
 				}
+				// TODO decompose the matrix into .position, .quaternion, scale
+				// markerRoot.matrix.decompose(markerRoot.position, markerRoot.quaternion, markerRoot.scale)
 			}
 		})
 	},

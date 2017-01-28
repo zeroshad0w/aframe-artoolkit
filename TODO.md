@@ -1,3 +1,5 @@
+- make it run in codepen
+  
 - import hatsune miku
   - copy hatsune files on repo
 - import md2 character

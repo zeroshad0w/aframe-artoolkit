@@ -60,3 +60,10 @@ modelView is able to provide multiple *independant* markers.
 - [jsartoolkit5](https://github.com/artoolkit/jsartoolkit5)
 - [artoolkit5](https://github.com/artoolkit/artoolkit5/)
 - good collection of [marker patterns](https://github.com/artoolkit/artoolkit5/tree/master/doc/patterns)
+
+# Futures
+- port that into a threex. it is more general. nothing is aframe specific 
+- webar-artoolkit: webvr api with artoolkit as positional tracking
+  - demo with a simple scene at 0,0,0 and the camera handled as the phone
+  - may be related to the threex thing
+- do a better codepen https://codepen.io/jeromeetienne/pen/mRqqzb?editors=1000#0
