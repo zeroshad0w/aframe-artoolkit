@@ -24,7 +24,7 @@ THREEx.ArToolkitMarker = function(context, object3d, parameters){
 	this.object3d = object3d
 	this.object3d.name = 'Marker Root'
 	this.object3d.matrixAutoUpdate = false;
-	this.object3d.visible = true
+	this.object3d.visible = false
 
 	// add this marker to artoolkitsystem
 	context.addMarker(this)

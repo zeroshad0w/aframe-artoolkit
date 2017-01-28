@@ -166,13 +166,6 @@ THREEx.ArToolkitContext.prototype._onSourceReady = function(width, height, onCom
 			arController.canvas.style.zIndex = '-1'
 		}
 
-		// set projectionMatrix
-                // var projectionMatrix = arController.getCameraMatrix();
-		// // TODO get it from document.querySelector
-		// var aScene = document.querySelector('a-scene')
-		// var camera = aScene.camera
-                // camera.projectionMatrix.fromArray(projectionMatrix);
-
 		// setPatternDetectionMode
 		var detectionModes = {
 			'color'			: artoolkit.AR_TEMPLATE_MATCHING_COLOR,
