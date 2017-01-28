@@ -68,7 +68,7 @@ THREEx.ArToolkitMarker.prototype._postInit = function(){
 
 	// listen to the event 
 	arController.addEventListener('getMarker', function(event){
-// console.log('getMarker')
+
 		if( event.data.type === artoolkit.PATTERN_MARKER && _this.parameters.type === 'pattern' ){
 			if( _this.markerId === null )	return
 			if( event.data.marker.idPatt === _this.markerId ) onMarkerFound()
@@ -84,7 +84,7 @@ THREEx.ArToolkitMarker.prototype._postInit = function(){
 			// data.matrix is the model view matrix
 			var modelViewMatrix = new THREE.Matrix4().fromArray(event.data.matrix)
 			markerRoot.visible = true
-// console.log('found')
+
 			if( _this.parameters.changeMatrixMode === 'modelViewMatrix' ){
 				markerRoot.matrix.copy(modelViewMatrix)						
 			}else if( _this.parameters.changeMatrixMode === 'cameraTransformMatrix' ){

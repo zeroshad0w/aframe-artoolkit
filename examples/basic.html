@@ -55,11 +55,13 @@
 
 
 var arToolkitContext = new THREEx.ArToolkitContext({
-	sourceType : 'webcam',
-	// sourceType : 'image',
-	// sourceUrl : '../aframe/examples/images/armchair.jpg',
+	// sourceType : 'webcam',
+	sourceType : 'image',
+	sourceUrl : '../aframe/examples/images/img.jpg',
 	cameraParametersUrl: '../aframe/examples/data/camera_para.dat',
+	detectionMode: 'mono'
 })
+// update the camera projectionMatrix
 arToolkitContext.addEventListener( 'ready', function ( event ) {
         var projectionMatrix = arToolkitContext.arController.getCameraMatrix();
         camera.projectionMatrix.fromArray(projectionMatrix);
@@ -69,8 +71,10 @@ onRenderFcts.push(function(){
 })
 
 var markerRoot = new THREE.Group
+scene.add(markerRoot)
 var artoolkitMarker = new THREEx.ArToolkitMarker(arToolkitContext, markerRoot, {
-	
+	type : 'pattern',
+	patternUrl : '../aframe/examples/data/patt.hiro'
 })
 	//////////////////////////////////////////////////////////////////////////////////
 	//		add an object in the scene
