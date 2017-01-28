@@ -1,11 +1,12 @@
 # change all aframe-artoolkit.js into 2 threex
 - make threex examples
+  - started... not completed
 - DONE reorga repo ala threex
 - DONE file threex.artoolkitcontext.js threex.artoolkitmarker.js
 - DONE make aframe-artoolkit to use that so same base
 - DONE issue with parameters
 
-
+- add baseUrl in aframe system
 
 
 # TODO

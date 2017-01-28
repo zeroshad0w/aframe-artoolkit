@@ -4,7 +4,7 @@ THREEx.ArToolkitContext = function(parameters){
 	var _this = this
 	// handle default parameters
 	this.parameters = {
-		debug: parameters.debug !== undefined ? parameters.debug : true,
+		debug: parameters.debug !== undefined ? parameters.debug : false,
 		sourceType : parameters.sourceType !== undefined ? parameters.sourceType : 'webcam',
 		sourceUrl : parameters.sourceUrl !== undefined ? parameters.sourceUrl : null,
 		detectionMode: parameters.detectionMode !== undefined ? parameters.detectionMode : 'color_and_matrix',
@@ -20,11 +20,15 @@ THREEx.ArToolkitContext = function(parameters){
                 console.log('ready')
                 _this._onSourceReady(width, height, function onCompleted(){
                         console.log('completed')
+			_this.dispatchEvent( { type: 'ready' } );
                 })
         })	
 }
 
 THREEx.ArToolkitContext.baseURL = '../'
+
+// Mixin the EventDispatcher.prototype with the custom object prototype
+Object.assign( THREEx.ArToolkitContext.prototype, THREE.EventDispatcher.prototype );
 
 THREEx.ArToolkitContext.prototype._initSource = function(onReady) {
         if( this.parameters.sourceType === 'image' ){
@@ -163,11 +167,11 @@ THREEx.ArToolkitContext.prototype._onSourceReady = function(width, height, onCom
 		}
 
 		// set projectionMatrix
-                var projectionMatrix = arController.getCameraMatrix();
-		// TODO get it from document.querySelector
-		var aScene = document.querySelector('a-scene')
-		var camera = aScene.camera
-                camera.projectionMatrix.fromArray(projectionMatrix);
+                // var projectionMatrix = arController.getCameraMatrix();
+		// // TODO get it from document.querySelector
+		// var aScene = document.querySelector('a-scene')
+		// var camera = aScene.camera
+                // camera.projectionMatrix.fromArray(projectionMatrix);
 
 		// setPatternDetectionMode
 		var detectionModes = {

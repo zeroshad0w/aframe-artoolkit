@@ -29,8 +29,16 @@ AFRAME.registerSystem('artoolkit', {
 		},
 	},
 	init: function () {
+		var _this = this;
 		var arToolkitContext = new THREEx.ArToolkitContext(this.data)
-		this.arToolkitContext = arToolkitContext;		
+		this.arToolkitContext = arToolkitContext;	
+		
+		// apply projectionMatrix
+		arToolkitContext.addEventListener( 'ready', function ( event ) {
+                        var projectionMatrix = arToolkitContext.arController.getCameraMatrix();
+                        _this.sceneEl.camera.projectionMatrix.fromArray(projectionMatrix);
+		})
+			
 	},
         
         tick : function(now, delta){

@@ -4,7 +4,7 @@ THREEx.ArToolkitContext = function(parameters){
 	var _this = this
 	// handle default parameters
 	this.parameters = {
-		debug: parameters.debug !== undefined ? parameters.debug : true,
+		debug: parameters.debug !== undefined ? parameters.debug : false,
 		sourceType : parameters.sourceType !== undefined ? parameters.sourceType : 'webcam',
 		sourceUrl : parameters.sourceUrl !== undefined ? parameters.sourceUrl : null,
 		detectionMode: parameters.detectionMode !== undefined ? parameters.detectionMode : 'color_and_matrix',
@@ -20,11 +20,15 @@ THREEx.ArToolkitContext = function(parameters){
                 console.log('ready')
                 _this._onSourceReady(width, height, function onCompleted(){
                         console.log('completed')
+			_this.dispatchEvent( { type: 'ready' } );
                 })
         })	
 }
 
 THREEx.ArToolkitContext.baseURL = '../'
+
+// Mixin the EventDispatcher.prototype with the custom object prototype
+Object.assign( THREEx.ArToolkitContext.prototype, THREE.EventDispatcher.prototype );
 
 THREEx.ArToolkitContext.prototype._initSource = function(onReady) {
         if( this.parameters.sourceType === 'image' ){
@@ -163,11 +167,11 @@ THREEx.ArToolkitContext.prototype._onSourceReady = function(width, height, onCom
 		}
 
 		// set projectionMatrix
-                var projectionMatrix = arController.getCameraMatrix();
-		// TODO get it from document.querySelector
-		var aScene = document.querySelector('a-scene')
-		var camera = aScene.camera
-                camera.projectionMatrix.fromArray(projectionMatrix);
+                // var projectionMatrix = arController.getCameraMatrix();
+		// // TODO get it from document.querySelector
+		// var aScene = document.querySelector('a-scene')
+		// var camera = aScene.camera
+                // camera.projectionMatrix.fromArray(projectionMatrix);
 
 		// setPatternDetectionMode
 		var detectionModes = {
@@ -303,6 +307,7 @@ THREEx.ArToolkitMarker.prototype._postInit = function(){
 
 	// listen to the event 
 	arController.addEventListener('getMarker', function(event){
+// console.log('getMarker')
 		if( event.data.type === artoolkit.PATTERN_MARKER && _this.parameters.type === 'pattern' ){
 			if( _this.markerId === null )	return
 			if( event.data.marker.idPatt === _this.markerId ) onMarkerFound()
@@ -318,7 +323,7 @@ THREEx.ArToolkitMarker.prototype._postInit = function(){
 			// data.matrix is the model view matrix
 			var modelViewMatrix = new THREE.Matrix4().fromArray(event.data.matrix)
 			markerRoot.visible = true
-
+// console.log('found')
 			if( _this.parameters.changeMatrixMode === 'modelViewMatrix' ){
 				markerRoot.matrix.copy(modelViewMatrix)						
 			}else if( _this.parameters.changeMatrixMode === 'cameraTransformMatrix' ){
@@ -370,8 +375,16 @@ AFRAME.registerSystem('artoolkit', {
 		},
 	},
 	init: function () {
+		var _this = this;
 		var arToolkitContext = new THREEx.ArToolkitContext(this.data)
-		this.arToolkitContext = arToolkitContext;		
+		this.arToolkitContext = arToolkitContext;	
+		
+		// apply projectionMatrix
+		arToolkitContext.addEventListener( 'ready', function ( event ) {
+                        var projectionMatrix = arToolkitContext.arController.getCameraMatrix();
+                        _this.sceneEl.camera.projectionMatrix.fromArray(projectionMatrix);
+		})
+			
 	},
         
         tick : function(now, delta){
