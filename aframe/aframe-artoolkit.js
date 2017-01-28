@@ -74,10 +74,10 @@ AFRAME.registerComponent('artoolkitmarker', {
 	},
 	init: function () {
 		var artoolkitContext = this.el.sceneEl.systems.artoolkit.arToolkitContext
-		this.artoolkitMarker = new THREEx.ArToolkitMarker(artoolkitContext, this.el.object3D, this.data)
+		this.arMarkerControls = new THREEx.ArMarkerControls(artoolkitContext, this.el.object3D, this.data)
 	},
 	remove : function(){
-		this.artoolkitMarker.dispose()
+		this.arMarkerControls.dispose()
 	},
 	update: function () {
 		// FIXME this mean to change the recode in trackBarcodeMarkerId ?

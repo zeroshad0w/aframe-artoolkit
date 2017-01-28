@@ -15,7 +15,7 @@ THREEx.ArToolkitContext = function(parameters){
         this.srcElement = null
         this.arController = null;
         this.cameraParameters = null
-	this._artoolkitMarkers = []
+	this._arMarkersControls = []
         this._initSource(function onReady(width, height){
                 console.log('ready')
                 _this._onSourceReady(width, height, function onCompleted(){
@@ -206,7 +206,7 @@ THREEx.ArToolkitContext.prototype.update = function(){
         if (!arController) return;
 
 	// mark all markers to invisible before processing this frame
-	this._artoolkitMarkers.forEach(function(artoolkitMarker){
+	this._arMarkersControls.forEach(function(artoolkitMarker){
 		artoolkitMarker.object3d.visible = false
 	})
 
@@ -217,16 +217,15 @@ THREEx.ArToolkitContext.prototype.update = function(){
 ////////////////////////////////////////////////////////////////////////////////
 //          Code Separator
 ////////////////////////////////////////////////////////////////////////////////
-THREEx.ArToolkitContext.prototype.addMarker = function(arToolkitMarker){
-	console.assert(arToolkitMarker instanceof THREEx.ArToolkitMarker)
-	console.log('add marker for', arToolkitMarker)	
-	this._artoolkitMarkers.push(arToolkitMarker)
+THREEx.ArToolkitContext.prototype.addMarker = function(arMarkerControls){
+	console.assert(arMarkerControls instanceof THREEx.ArMarkerControls)
+	this._arMarkersControls.push(arMarkerControls)
 }
 
-THREEx.ArToolkitContext.prototype.removeMarker = function(arToolkitMarker){
-	console.assert(arToolkitMarker instanceof THREEx.ArToolkitMarker)
-	// console.log('remove marker for', arToolkitMarker)
-	var index = this.arToolkitMarkers.indexOf(artoolkitMarker);
+THREEx.ArToolkitContext.prototype.removeMarker = function(arMarkerControls){
+	console.assert(arMarkerControls instanceof THREEx.ArMarkerControls)
+	// console.log('remove marker for', arMarkerControls)
+	var index = this.arMarkerControlss.indexOf(artoolkitMarker);
 	console.assert(index !== index )
-	this._artoolkitMarkers.splice(index, 1)
+	this._arMarkersControls.splice(index, 1)
 }

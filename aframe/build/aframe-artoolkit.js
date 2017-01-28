@@ -1,5 +1,112 @@
 var THREEx = THREEx || {}
 
+THREEx.ArMarkerControls = function(context, object3d, parameters){
+	var _this = this
+	this.context = context
+	// handle default parameters
+	this.parameters = {
+		size : parameters.debug !== undefined ? parameters.debug : 1,
+		type : parameters.type !== undefined ? parameters.type : 'unknown',
+		patternUrl : parameters.patternUrl !== undefined ? parameters.patternUrl : null,
+		barcodeValue : parameters.barcodeValue !== undefined ? parameters.barcodeValue : null,
+		changeMatrixMode : parameters.changeMatrixMode !== undefined ? parameters.changeMatrixMode : 'modelViewMatrix',
+	}
+
+	// sanity check
+	var possibleValues = ['pattern', 'barcode', 'unknown' ]
+	console.assert(possibleValues.indexOf(this.parameters.type) !== -1, 'illegal value', this.parameters.type)
+	var possibleValues = ['modelViewMatrix', 'cameraTransformMatrix' ]
+	console.assert(possibleValues.indexOf(this.parameters.changeMatrixMode) !== -1, 'illegal value', this.parameters.changeMatrixMode)
+
+	this.markerId = null
+
+        // create the marker Root
+	this.object3d = object3d
+	this.object3d.name = 'Marker Root'
+	this.object3d.matrixAutoUpdate = false;
+	this.object3d.visible = false
+
+	// add this marker to artoolkitsystem
+	context.addMarker(this)
+	
+	// wait for arController to be initialized before going on with the init
+	var delayedInitTimerId = setInterval(function(){
+		// check if arController is init
+		var arController = _this.context.arController
+		if( arController === null )	return
+		// stop looping if it is init
+		clearInterval(delayedInitTimerId)
+		delayedInitTimerId = null
+		// launch the _postInit
+		_this._postInit()
+	}, 1000/50)
+	return
+	
+}
+
+THREEx.ArMarkerControls.prototype._postInit = function(){
+	var _this = this
+	var markerRoot = this.object3d;
+	// check if arController is init
+	var arController = this.context.arController
+	console.assert(arController !== null )
+
+	// start tracking this pattern
+	if( _this.parameters.type === 'pattern' ){
+                arController.loadMarker(_this.parameters.patternUrl, function(markerId) {
+			_this.markerId = markerId
+                        arController.trackPatternMarkerId(_this.markerId, _this.parameters.size);
+                });				
+	}else if( _this.parameters.type === 'barcode' ){
+		_this.markerId = _this.parameters.barcodeValue
+		arController.trackBarcodeMarkerId(_this.markerId, _this.parameters.size);
+	}else if( _this.parameters.type === 'unknown' ){
+		_this.markerId = null
+	}else{
+		console.log(false, 'invalid marker type', _this.parameters.type)
+	}
+
+	// listen to the event 
+	arController.addEventListener('getMarker', function(event){
+
+		if( event.data.type === artoolkit.PATTERN_MARKER && _this.parameters.type === 'pattern' ){
+			if( _this.markerId === null )	return
+			if( event.data.marker.idPatt === _this.markerId ) onMarkerFound()
+		}else if( event.data.type === artoolkit.BARCODE_MARKER && _this.parameters.type === 'barcode' ){
+			// console.log('BARCODE_MARKER idMatrix', event.data.marker.idMatrix, _this.markerId )
+			if( _this.markerId === null )	return
+			if( event.data.marker.idMatrix === _this.markerId )  onMarkerFound()
+		}else if( event.data.type === artoolkit.UNKNOWN_MARKER && _this.parameters.type === 'unknown'){
+			onMarkerFound()
+		}
+
+		function onMarkerFound(){
+			// data.matrix is the model view matrix
+			var modelViewMatrix = new THREE.Matrix4().fromArray(event.data.matrix)
+			markerRoot.visible = true
+
+			if( _this.parameters.changeMatrixMode === 'modelViewMatrix' ){
+				markerRoot.matrix.copy(modelViewMatrix)						
+			}else if( _this.parameters.changeMatrixMode === 'cameraTransformMatrix' ){
+				var cameraTransformMatrix = new THREE.Matrix4().getInverse( modelViewMatrix )
+				markerRoot.matrix.copy(cameraTransformMatrix)						
+			}else {
+				console.assert(false)
+			}
+			// decompose the matrix into .position, .quaternion, scale
+			markerRoot.matrix.decompose(markerRoot.position, markerRoot.quaternion, markerRoot.scale)
+		}
+	})
+}
+
+THREEx.ArMarkerControls.dispose = function(){
+	this.context.removeMarker(this)
+	
+	// TODO remove the event listener if needed
+	// unloadMaker ???
+}
+var THREEx = THREEx || {}
+
 THREEx.ArToolkitContext = function(parameters){
 	var _this = this
 	// handle default parameters
@@ -15,7 +122,7 @@ THREEx.ArToolkitContext = function(parameters){
         this.srcElement = null
         this.arController = null;
         this.cameraParameters = null
-	this._artoolkitMarkers = []
+	this._arMarkersControls = []
         this._initSource(function onReady(width, height){
                 console.log('ready')
                 _this._onSourceReady(width, height, function onCompleted(){
@@ -166,13 +273,6 @@ THREEx.ArToolkitContext.prototype._onSourceReady = function(width, height, onCom
 			arController.canvas.style.zIndex = '-1'
 		}
 
-		// set projectionMatrix
-                // var projectionMatrix = arController.getCameraMatrix();
-		// // TODO get it from document.querySelector
-		// var aScene = document.querySelector('a-scene')
-		// var camera = aScene.camera
-                // camera.projectionMatrix.fromArray(projectionMatrix);
-
 		// setPatternDetectionMode
 		var detectionModes = {
 			'color'			: artoolkit.AR_TEMPLATE_MATCHING_COLOR,
@@ -213,7 +313,7 @@ THREEx.ArToolkitContext.prototype.update = function(){
         if (!arController) return;
 
 	// mark all markers to invisible before processing this frame
-	this._artoolkitMarkers.forEach(function(artoolkitMarker){
+	this._arMarkersControls.forEach(function(artoolkitMarker){
 		artoolkitMarker.object3d.visible = false
 	})
 
@@ -224,125 +324,17 @@ THREEx.ArToolkitContext.prototype.update = function(){
 ////////////////////////////////////////////////////////////////////////////////
 //          Code Separator
 ////////////////////////////////////////////////////////////////////////////////
-THREEx.ArToolkitContext.prototype.addMarker = function(arToolkitMarker){
-	console.assert(arToolkitMarker instanceof THREEx.ArToolkitMarker)
-	console.log('add marker for', arToolkitMarker)	
-	this._artoolkitMarkers.push(arToolkitMarker)
+THREEx.ArToolkitContext.prototype.addMarker = function(arMarkerControls){
+	console.assert(arMarkerControls instanceof THREEx.ArMarkerControls)
+	this._arMarkersControls.push(arMarkerControls)
 }
 
-THREEx.ArToolkitContext.prototype.removeMarker = function(arToolkitMarker){
-	console.assert(arToolkitMarker instanceof THREEx.ArToolkitMarker)
-	// console.log('remove marker for', arToolkitMarker)
-	var index = this.arToolkitMarkers.indexOf(artoolkitMarker);
+THREEx.ArToolkitContext.prototype.removeMarker = function(arMarkerControls){
+	console.assert(arMarkerControls instanceof THREEx.ArMarkerControls)
+	// console.log('remove marker for', arMarkerControls)
+	var index = this.arMarkerControlss.indexOf(artoolkitMarker);
 	console.assert(index !== index )
-	this._artoolkitMarkers.splice(index, 1)
-}
-var THREEx = THREEx || {}
-
-THREEx.ArToolkitMarker = function(context, object3d, parameters){
-	var _this = this
-	this.context = context
-	// handle default parameters
-	this.parameters = {
-		size : parameters.debug !== undefined ? parameters.debug : 1,
-		type : parameters.type !== undefined ? parameters.type : 'unknown',
-		patternUrl : parameters.patternUrl !== undefined ? parameters.patternUrl : null,
-		barcodeValue : parameters.barcodeValue !== undefined ? parameters.barcodeValue : null,
-		changeMatrixMode : parameters.changeMatrixMode !== undefined ? parameters.changeMatrixMode : 'modelViewMatrix',
-	}
-
-	// sanity check
-	var possibleValues = ['pattern', 'barcode', 'unknown' ]
-	console.assert(possibleValues.indexOf(this.parameters.type) !== -1, 'illegal value', this.parameters.type)
-	var possibleValues = ['modelViewMatrix', 'cameraTransformMatrix' ]
-	console.assert(possibleValues.indexOf(this.parameters.changeMatrixMode) !== -1, 'illegal value', this.parameters.changeMatrixMode)
-
-	this.markerId = null
-
-        // create the marker Root
-	this.object3d = object3d
-	this.object3d.name = 'Marker Root'
-	this.object3d.matrixAutoUpdate = false;
-	this.object3d.visible = true
-
-	// add this marker to artoolkitsystem
-	context.addMarker(this)
-	
-	// wait for arController to be initialized before going on with the init
-	var delayedInitTimerId = setInterval(function(){
-		// check if arController is init
-		var arController = _this.context.arController
-		if( arController === null )	return
-		// stop looping if it is init
-		clearInterval(delayedInitTimerId)
-		delayedInitTimerId = null
-		// launch the _postInit
-		_this._postInit()
-	}, 1000/50)
-	return
-	
-}
-
-THREEx.ArToolkitMarker.prototype._postInit = function(){
-	var _this = this
-	var markerRoot = this.object3d;
-	// check if arController is init
-	var arController = this.context.arController
-	console.assert(arController !== null )
-
-	// start tracking this pattern
-	if( _this.parameters.type === 'pattern' ){
-                arController.loadMarker(_this.parameters.patternUrl, function(markerId) {
-			_this.markerId = markerId
-                        arController.trackPatternMarkerId(_this.markerId, _this.parameters.size);
-                });				
-	}else if( _this.parameters.type === 'barcode' ){
-		_this.markerId = _this.parameters.barcodeValue
-		arController.trackBarcodeMarkerId(_this.markerId, _this.parameters.size);
-	}else if( _this.parameters.type === 'unknown' ){
-		_this.markerId = null
-	}else{
-		console.log(false, 'invalid marker type', _this.parameters.type)
-	}
-
-	// listen to the event 
-	arController.addEventListener('getMarker', function(event){
-// console.log('getMarker')
-		if( event.data.type === artoolkit.PATTERN_MARKER && _this.parameters.type === 'pattern' ){
-			if( _this.markerId === null )	return
-			if( event.data.marker.idPatt === _this.markerId ) onMarkerFound()
-		}else if( event.data.type === artoolkit.BARCODE_MARKER && _this.parameters.type === 'barcode' ){
-			// console.log('BARCODE_MARKER idMatrix', event.data.marker.idMatrix, _this.markerId )
-			if( _this.markerId === null )	return
-			if( event.data.marker.idMatrix === _this.markerId )  onMarkerFound()
-		}else if( event.data.type === artoolkit.UNKNOWN_MARKER && _this.parameters.type === 'unknown'){
-			onMarkerFound()
-		}
-
-		function onMarkerFound(){
-			// data.matrix is the model view matrix
-			var modelViewMatrix = new THREE.Matrix4().fromArray(event.data.matrix)
-			markerRoot.visible = true
-// console.log('found')
-			if( _this.parameters.changeMatrixMode === 'modelViewMatrix' ){
-				markerRoot.matrix.copy(modelViewMatrix)						
-			}else if( _this.parameters.changeMatrixMode === 'cameraTransformMatrix' ){
-				var cameraTransformMatrix = new THREE.Matrix4().getInverse( modelViewMatrix )
-				markerRoot.matrix.copy(cameraTransformMatrix)						
-			}else {
-				console.assert(false)
-			}
-			// decompose the matrix into .position, .quaternion, scale
-			markerRoot.matrix.decompose(markerRoot.position, markerRoot.quaternion, markerRoot.scale)
-		}
-	})
-}
-
-THREEx.ArToolkitMarker.dispose = function(){
-	this.context.removeMarker(this)
-	
-	// TODO remove the event listener if needed
-	// unloadMaker ???
+	this._arMarkersControls.splice(index, 1)
 }
 //////////////////////////////////////////////////////////////////////////////
 //		Code Separator
@@ -420,10 +412,10 @@ AFRAME.registerComponent('artoolkitmarker', {
 	},
 	init: function () {
 		var artoolkitContext = this.el.sceneEl.systems.artoolkit.arToolkitContext
-		this.artoolkitMarker = new THREEx.ArToolkitMarker(artoolkitContext, this.el.object3D, this.data)
+		this.arMarkerControls = new THREEx.ArMarkerControls(artoolkitContext, this.el.object3D, this.data)
 	},
 	remove : function(){
-		this.artoolkitMarker.dispose()
+		this.arMarkerControls.dispose()
 	},
 	update: function () {
 		// FIXME this mean to change the recode in trackBarcodeMarkerId ?

@@ -1,6 +1,6 @@
 var THREEx = THREEx || {}
 
-THREEx.ArToolkitMarker = function(context, object3d, parameters){
+THREEx.ArMarkerControls = function(context, object3d, parameters){
 	var _this = this
 	this.context = context
 	// handle default parameters
@@ -44,7 +44,7 @@ THREEx.ArToolkitMarker = function(context, object3d, parameters){
 	
 }
 
-THREEx.ArToolkitMarker.prototype._postInit = function(){
+THREEx.ArMarkerControls.prototype._postInit = function(){
 	var _this = this
 	var markerRoot = this.object3d;
 	// check if arController is init
@@ -99,7 +99,7 @@ THREEx.ArToolkitMarker.prototype._postInit = function(){
 	})
 }
 
-THREEx.ArToolkitMarker.dispose = function(){
+THREEx.ArMarkerControls.dispose = function(){
 	this.context.removeMarker(this)
 	
 	// TODO remove the event listener if needed
