@@ -17,18 +17,16 @@ Augmented reality for a-frame
 # Show, Don't Tell
 Here are the demos
 
-- [basic.html](https://jeromeetienne.github.io/aframe-artoolkit/examples/basic.html) 
+- [basic.html](https://jeromeetienne.github.io/aframe-artoolkit/aframe/examples/basic.html) 
 basic minimal examples. Good to get started
-- [demo.html](https://jeromeetienne.github.io/aframe-artoolkit/examples/demo.html) 
+- [demo.html](https://jeromeetienne.github.io/aframe-artoolkit/aframe/examples/demo.html) 
 shows you all the possibilities of aframe-artoolkit. You can play around
-- [marker-camera.html](https://jeromeetienne.github.io/aframe-artoolkit/examples/marker-camera.html):
+- [marker-camera.html](https://jeromeetienne.github.io/aframe-artoolkit/aframe/examples/marker-camera.html):
 Move the camera instead of using the usual "camera looking toward negative-z and modelViewMatrix"
-- [multiple-independant-markers.html](https://jeromeetienne.github.io/aframe-artoolkit/examples/multiple-independant-markers.html):
+- [multiple-independant-markers.html](https://jeromeetienne.github.io/aframe-artoolkit/aframe/examples/multiple-independant-markers.html):
 Handle multiple indepant markers in a single scene.
-- [minecraft.html](https://jeromeetienne.github.io/aframe-artoolkit/examples/minecraft.html): 
-include a minecraft on the marker
-- [hatsune.html](https://jeromeetienne.github.io/aframe-artoolkit/examples/hatsune.html) 
-include a hatsune miku on the marker
+- [hatsune-minecraft.html](https://jeromeetienne.github.io/aframe-artoolkit/aframe/examples/minecraft.html): 
+include a hatsune miku or minecraft avatar on the marker
 
 
 # <a-marker-camera>
