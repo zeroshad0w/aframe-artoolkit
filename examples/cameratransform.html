@@ -20,7 +20,6 @@
 		alpha: true
 	});
 	renderer.setClearColor(new THREE.Color('lightgrey'), 0)
-	// renderer.setSize( 1280/2, 960/2 );
 	renderer.setSize( 640, 480 );
 	renderer.domElement.style.position = 'absolute'
 	renderer.domElement.style.top = '0px'
@@ -46,7 +45,7 @@
 
 	// Create a camera and a marker root object for your Three.js scene.
 	var camera = new THREE.Camera();
-	// scene.add(camera);
+	scene.add(camera);
 
 	// create arToolkitContext
 	var arToolkitContext = new THREEx.ArToolkitContext({

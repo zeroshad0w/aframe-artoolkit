@@ -76,16 +76,13 @@
 
 				scene = new THREE.Scene();
 
-var camera = new THREE.Camera();
 				camera = new THREE.PerspectiveCamera( 70, window.innerWidth / window.innerHeight, 0.1, 10 );
 				scene.add( camera );
 		window.camera = camera
 
-				room = new THREE.Mesh(
-					new THREE.BoxGeometry( 6, 6, 6, 8, 8, 8 ),
-					new THREE.MeshBasicMaterial( { color: 0x404040, wireframe: true } )
-				);
-				scene.add( room );
+				var object = new THREE.GridHelper(10, 100)
+				object.rotateX(Math.PI/2)
+				scene.add(object)
 
 				scene.add( new THREE.HemisphereLight( 0x606060, 0x404040 ) );
 
@@ -94,8 +91,13 @@ var camera = new THREE.Camera();
 				scene.add( light );
 
 				var geometry = new THREE.BoxGeometry( 1,1,1 );
-				var material =  new THREE.MeshLambertMaterial( { color: Math.random() * 0xffffff } )
+				var material =  new THREE.MeshNormalMaterial( {
+					side : THREE.DoubleSide,
+					transparent : true,
+					opacity : 0.5
+				} )
 				var object = new THREE.Mesh( geometry, material);
+				object.position.z = geometry.parameters.height/2
 				scene.add( object );
 
 				renderer = new THREE.WebGLRenderer( { antialias: true, alpha: true } );
