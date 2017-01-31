@@ -1,10 +1,11 @@
 # Fix resolution issue
 - relation between video resolution and cpu performance
 
-- issue: aspect is not respected
+- issue: aspect is not visually respected
 - issue: not dynamic, handle window resize
-- relation with stereo display ?
-- stereo display imply to have video in the 3d ?
+
+- LATER relation with stereo display ?
+- LATER to have the video in webgl ? or in DOM ? should i care now ?
 
 
 - DONE issue: the screen resolution and the image resolution should NOT be the same
@@ -13,7 +14,6 @@
 - DONE the size is set in the renderer and then propagated
 - DONE able to set whatever resolution at start
 - DONE video aspect ratio should be the same as the 3d canvas one
-  
 
 # Performance
 - a 320x240 video is doing 30fps on nexus6p, without webassembly and webworker
