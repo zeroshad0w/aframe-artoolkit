@@ -65,8 +65,10 @@
 		cameraParametersUrl: '../aframe/examples/data/camera_para.dat',
 		detectionMode: 'mono'
 	}, {
-		imageWidth : renderer.getSize().width,
-		imageHeight : renderer.getSize().height,
+		imageWidth : 320,
+		imageHeight : 240,
+		displayWidth : renderer.getSize().width,
+		displayHeight : renderer.getSize().height,
 	})
 	// update the camera projectionMatrix
 	arToolkitContext.addEventListener( 'ready', function ( event ) {

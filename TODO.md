@@ -1,14 +1,15 @@
 # Fix resolution issue
 - relation between video resolution and cpu performance
 
-- issue: not dynamic - LATER
 - issue: aspect is not respected
-- relation with stereo display
+- issue: not dynamic, handle window resize
+- relation with stereo display ?
 - stereo display imply to have video in the 3d ?
-- issue: the screen resolution and the image resolution should NOT be the same
-        - displayWidth/displayHeight to have the resolution
-        - imageWidth/Height are faster when smaller
 
+
+- DONE issue: the screen resolution and the image resolution should NOT be the same
+  - displayWidth/displayHeight to have the resolution
+  - imageWidth/Height are faster when smaller
 - DONE the size is set in the renderer and then propagated
 - DONE able to set whatever resolution at start
 - DONE video aspect ratio should be the same as the 3d canvas one

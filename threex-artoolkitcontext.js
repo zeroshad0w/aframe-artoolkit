@@ -5,7 +5,9 @@ THREEx.ArToolkitContext = function(parameters, options){
 	
 	this.options = {
 		imageWidth: options.imageWidth !== undefined ? options.imageWidth : 640,
-		imageHeight: options.imageHeight !== undefined ? options.imageHeight : 640,
+		imageHeight: options.imageHeight !== undefined ? options.imageHeight : 480,
+		displayWidth: options.displayWidth !== undefined ? options.displayWidth : 640,
+		displayHeight: options.displayHeight !== undefined ? options.displayHeight : 480,
 	}	
 	
 	// handle default parameters
@@ -22,9 +24,9 @@ THREEx.ArToolkitContext = function(parameters, options){
         this.arController = null;
         this.cameraParameters = null
 	this._arMarkersControls = []
-        this._initSource(function onReady(width, height){
+        this._initSource(function onSourceReady(){
                 console.log('ready')
-                _this._onSourceReady(width, height, function onCompleted(){
+                _this._onSourceReady(function onCompleted(){
                         console.log('completed')
 			_this.dispatchEvent( { type: 'ready' } );
                 })
@@ -39,15 +41,15 @@ Object.assign( THREEx.ArToolkitContext.prototype, THREE.EventDispatcher.prototyp
 THREEx.ArToolkitContext.prototype._initSource = function(onReady) {
         if( this.parameters.sourceType === 'image' ){
                 var srcElement = this._initSourceImage(function(){
-                        onReady(srcElement.width, srcElement.height)
+                        onReady()
                 })                        
         }else if( this.parameters.sourceType === 'video' ){
                 var srcElement = this._initSourceVideo(function(){
-                        onReady(srcElement.width, srcElement.height)
+                        onReady()
                 })                        
         }else if( this.parameters.sourceType === 'webcam' ){
                 var srcElement = this._initSourceWebcam(function(){
-                        onReady(srcElement.videoWidth, srcElement.videoHeight)
+                        onReady()
                 })                        
         }else{
                 console.assert(false)
@@ -67,6 +69,8 @@ THREEx.ArToolkitContext.prototype._initSourceImage = function(onReady) {
 
 	srcElement.width = this.options.imageWidth
 	srcElement.height = this.options.imageHeight
+	srcElement.style.width = this.options.displayWidth+'px'
+	srcElement.style.height = this.options.displayHeight+'px'
 
 	setTimeout(function(){
 		onReady && onReady()
@@ -156,8 +160,12 @@ THREEx.ArToolkitContext.prototype._initSourceWebcam = function(onReady) {
 //////////////////////////////////////////////////////////////////////////////
 //		Code Separator
 //////////////////////////////////////////////////////////////////////////////
-THREEx.ArToolkitContext.prototype._onSourceReady = function(width, height, onCompleted){
+THREEx.ArToolkitContext.prototype._onSourceReady = function(onCompleted){
         var _this = this
+	
+	var width = this.options.imageWidth
+	var height = this.options.imageHeight
+
         console.log('ArToolkitContext: _onSourceReady width', width, 'height', height)
         _this.cameraParameters = new ARCameraParam(_this.parameters.cameraParametersUrl, function() {
         	// init controller
