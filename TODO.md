@@ -2,7 +2,13 @@
 - able to set whatever resolution at start
 - video aspect ratio should be the same as the 3d canvas one
 - relation between video resolution and cpu performance
+- first it would be good to centralize this data
+  - easier to modify
+  - easier to keep track
+
+# Performance
 - a 320x240 video is doing 30fps on nexus6p, without webassembly and webworker
+- does the webworker version 
 
 # TODO
 - webvr-polyfill support present with stereo and good projectionMatrix
