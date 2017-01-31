@@ -1,10 +1,18 @@
 # Fix resolution issue
-- able to set whatever resolution at start
-- video aspect ratio should be the same as the 3d canvas one
 - relation between video resolution and cpu performance
-- first it would be good to centralize this data
-  - easier to modify
-  - easier to keep track
+
+- issue: not dynamic - LATER
+- issue: aspect is not respected
+- relation with stereo display
+- stereo display imply to have video in the 3d ?
+- issue: the screen resolution and the image resolution should NOT be the same
+        - displayWidth/displayHeight to have the resolution
+        - imageWidth/Height are faster when smaller
+
+- DONE the size is set in the renderer and then propagated
+- DONE able to set whatever resolution at start
+- DONE video aspect ratio should be the same as the 3d canvas one
+  
 
 # Performance
 - a 320x240 video is doing 30fps on nexus6p, without webassembly and webworker

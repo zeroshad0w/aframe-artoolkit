@@ -20,8 +20,12 @@
 		alpha: true
 	});
 	renderer.setClearColor(new THREE.Color('lightgrey'), 0)
-	// renderer.setSize( 1280/2, 960/2 );
-	renderer.setSize( 640, 480 );
+	// renderer.setSize( 640, 480 );
+
+	// renderer.setSize( 812, 783 );
+	renderer.setSize( window.innerWidth, window.innerHeight );
+
+
 	renderer.domElement.style.position = 'absolute'
 	renderer.domElement.style.top = '0px'
 	renderer.domElement.style.left = '0px'
@@ -51,10 +55,18 @@
 
 	var arToolkitContext = new THREEx.ArToolkitContext({
 		// sourceType : 'webcam',
+
 		sourceType : 'image',
 		sourceUrl : '../aframe/examples/images/img.jpg',
+
+		// sourceType : 'video',
+		// sourceUrl: '../aframe/examples/videos/headtracking.mp4',
+
 		cameraParametersUrl: '../aframe/examples/data/camera_para.dat',
 		detectionMode: 'mono'
+	}, {
+		imageWidth : renderer.getSize().width,
+		imageHeight : renderer.getSize().height,
 	})
 	// update the camera projectionMatrix
 	arToolkitContext.addEventListener( 'ready', function ( event ) {
@@ -69,7 +81,8 @@
 	scene.add(markerRoot)
 	var artoolkitMarker = new THREEx.ArMarkerControls(arToolkitContext, markerRoot, {
 		type : 'pattern',
-		patternUrl : '../aframe/examples/data/patt.hiro'
+		patternUrl : '../aframe/examples/data/patt.hiro',
+		// patternUrl : '../aframe/examples/data/patt.kanji',
 	})
 
 

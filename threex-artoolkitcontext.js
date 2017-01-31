@@ -1,7 +1,13 @@
 var THREEx = THREEx || {}
 
-THREEx.ArToolkitContext = function(parameters){
+THREEx.ArToolkitContext = function(parameters, options){
 	var _this = this
+	
+	this.options = {
+		imageWidth: options.imageWidth !== undefined ? options.imageWidth : 640,
+		imageHeight: options.imageHeight !== undefined ? options.imageHeight : 640,
+	}	
+	
 	// handle default parameters
 	this.parameters = {
 		debug: parameters.debug !== undefined ? parameters.debug : false,
@@ -59,8 +65,8 @@ THREEx.ArToolkitContext.prototype._initSourceImage = function(onReady) {
 	document.body.appendChild(srcElement)
 	srcElement.src = this.parameters.sourceUrl
 
-	srcElement.width = 640
-	srcElement.height = 480
+	srcElement.width = this.options.imageWidth
+	srcElement.height = this.options.imageHeight
 
 	setTimeout(function(){
 		onReady && onReady()
@@ -74,13 +80,15 @@ THREEx.ArToolkitContext.prototype._initSourceVideo = function(onReady) {
 	document.body.appendChild(srcElement)
 	srcElement.src = this.parameters.sourceUrl
 
+	srcElement.style.objectFit = 'initial'
+
 	srcElement.autoplay = true;
 	srcElement.webkitPlaysinline = true;
 	srcElement.controls = false;
 	srcElement.loop = true;
 
-	srcElement.width = 640;
-	srcElement.height = 480;
+	srcElement.width = this.options.imageWidth
+	srcElement.height = this.options.imageHeight
 	
 	// wait until the video stream is ready
 	var interval = setInterval(function() {
@@ -107,8 +115,8 @@ THREEx.ArToolkitContext.prototype._initSourceWebcam = function(onReady) {
 			audio: false,
 			video: {
 				mandatory: {
-					maxWidth: 640,
-					maxHeight: 480
+					maxWidth: _this.options.imageWidth,
+					maxHeight: _this.options.imageHeight
 		    		}
 		  	}
                 }
