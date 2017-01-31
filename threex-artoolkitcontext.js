@@ -86,13 +86,20 @@ THREEx.ArToolkitContext.prototype._initSourceVideo = function(onReady) {
 
 	srcElement.style.objectFit = 'initial'
 
-	srcElement.autoplay = true;
+	// srcElement.autoplay = true;
 	srcElement.webkitPlaysinline = true;
 	srcElement.controls = false;
 	srcElement.loop = true;
 
+	// trick to trigger the video on android
+	document.body.addEventListener('click', function(){
+		srcElement.play()
+	})
+
 	srcElement.width = this.options.imageWidth
 	srcElement.height = this.options.imageHeight
+	srcElement.style.width = this.options.displayWidth+'px'
+	srcElement.style.height = this.options.displayHeight+'px'
 	
 	// wait until the video stream is ready
 	var interval = setInterval(function() {
@@ -109,6 +116,9 @@ THREEx.ArToolkitContext.prototype._initSourceWebcam = function(onReady) {
 
 	var srcElement = document.createElement('video');
 	document.body.appendChild(srcElement);
+	srcElement.style.width = this.options.displayWidth+'px'
+	srcElement.style.height = this.options.displayHeight+'px'
+
 
 	if (navigator.getUserMedia == false )	console.log("navigator.getUserMedia not present in your browser");
 

@@ -16,14 +16,15 @@
 
 	// init renderer
 	var renderer	= new THREE.WebGLRenderer({
-		antialias	: true,
+		// antialias	: true,
 		alpha: true
 	});
 	renderer.setClearColor(new THREE.Color('lightgrey'), 0)
-	// renderer.setSize( 640, 480 );
+	renderer.setPixelRatio(1/2)
+	renderer.setSize( 640, 480 );
 
 	// renderer.setSize( 812, 783 );
-	renderer.setSize( window.innerWidth, window.innerHeight );
+	// renderer.setSize( window.innerWidth, window.innerHeight );
 
 
 	renderer.domElement.style.position = 'absolute'
@@ -56,17 +57,20 @@
 	var arToolkitContext = new THREEx.ArToolkitContext({
 		// sourceType : 'webcam',
 
-		sourceType : 'image',
-		sourceUrl : '../aframe/examples/images/img.jpg',
+		// sourceType : 'image',
+		// sourceUrl : '../aframe/examples/images/img.jpg',
 
-		// sourceType : 'video',
-		// sourceUrl: '../aframe/examples/videos/headtracking.mp4',
+		sourceType : 'video',
+		sourceUrl: '../aframe/examples/videos/headtracking.mp4',
 
 		cameraParametersUrl: '../aframe/examples/data/camera_para.dat',
 		detectionMode: 'mono'
 	}, {
-		imageWidth : 320,
-		imageHeight : 240,
+		// imageWidth : 320,
+		// imageHeight : 240,
+
+		imageWidth : 80*3,
+		imageHeight : 60*3,
 		displayWidth : renderer.getSize().width,
 		displayHeight : renderer.getSize().height,
 	})
@@ -83,8 +87,8 @@
 	scene.add(markerRoot)
 	var artoolkitMarker = new THREEx.ArMarkerControls(arToolkitContext, markerRoot, {
 		type : 'pattern',
-		patternUrl : '../aframe/examples/data/patt.hiro',
-		// patternUrl : '../aframe/examples/data/patt.kanji',
+		// patternUrl : '../aframe/examples/data/patt.hiro',
+		patternUrl : '../aframe/examples/data/patt.kanji',
 	})
 
 
