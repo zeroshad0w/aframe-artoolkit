@@ -86,7 +86,7 @@ THREEx.ArToolkitContext.prototype._initSourceVideo = function(onReady) {
 
 	srcElement.style.objectFit = 'initial'
 
-	// srcElement.autoplay = true;
+	srcElement.autoplay = true;
 	srcElement.webkitPlaysinline = true;
 	srcElement.controls = false;
 	srcElement.loop = true;
