@@ -1,6 +1,12 @@
-# Fix resolution issue
-- relation between video resolution and cpu performance
+# How to keep source image aspect
+- can we change the videoAspectRatio dynamically ?
+- there is 3 ratio: videoAspectRatio, artoolkitAspectRatio, screenAspectRatio
+- screenAspectRatio should be equal to artoolkitAspectRatio
+  - this doesnt imply to have the same resolution
+  - so technically i could definitly extract a part of video which has screenAspectRatio
+  - 
 
+# Fix resolution issue
 - issue: aspect is not visually respected
 - issue: not dynamic, handle window resize
 
