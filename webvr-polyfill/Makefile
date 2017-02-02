@@ -3,8 +3,8 @@ watch: build
 	
 .PHONY: build
 build: 
-	cat 	../vendor/jsartoolkit/artoolkit.debug.js	\
-		../vendor/jsartoolkit/artoolkit.api.js		\
+	cat 	../vendor/jsartoolkit5/build/artoolkit.min.js	\
+		../vendor/jsartoolkit5/js/artoolkit.api.js		\
 		../threex-*.js 					\
 		src/artoolkit-framedata.js 			\
 		src/generic-webvr-polyfill.js 			\

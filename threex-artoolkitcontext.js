@@ -1,14 +1,7 @@
 var THREEx = THREEx || {}
 
-THREEx.ArToolkitContext = function(parameters, options){
+THREEx.ArToolkitContext = function(parameters){
 	var _this = this
-	
-	this.options = {
-		imageWidth: options.imageWidth !== undefined ? options.imageWidth : 640,
-		imageHeight: options.imageHeight !== undefined ? options.imageHeight : 480,
-		displayWidth: options.displayWidth !== undefined ? options.displayWidth : 640,
-		displayHeight: options.displayHeight !== undefined ? options.displayHeight : 480,
-	}	
 	
 	// handle default parameters
 	this.parameters = {
@@ -18,6 +11,11 @@ THREEx.ArToolkitContext = function(parameters, options){
 		detectionMode: parameters.detectionMode !== undefined ? parameters.detectionMode : 'color_and_matrix',
 		matrixCodeType: parameters.matrixCodeType !== undefined ? parameters.matrixCodeType : '3x3',
 		cameraParametersUrl: parameters.cameraParametersUrl !== undefined ? parameters.cameraParametersUrl : THREEx.ArToolkitContext.baseURL + 'parameters/camera_para.dat',
+
+		imageWidth: parameters.imageWidth !== undefined ? parameters.imageWidth : 640,
+		imageHeight: parameters.imageHeight !== undefined ? parameters.imageHeight : 480,
+		displayWidth: parameters.displayWidth !== undefined ? parameters.displayWidth : 640,
+		displayHeight: parameters.displayHeight !== undefined ? parameters.displayHeight : 480,
 	}
 	
         this.srcElement = null
@@ -67,10 +65,10 @@ THREEx.ArToolkitContext.prototype._initSourceImage = function(onReady) {
 	document.body.appendChild(srcElement)
 	srcElement.src = this.parameters.sourceUrl
 
-	srcElement.width = this.options.imageWidth
-	srcElement.height = this.options.imageHeight
-	srcElement.style.width = this.options.displayWidth+'px'
-	srcElement.style.height = this.options.displayHeight+'px'
+	srcElement.width = this.parameters.imageWidth
+	srcElement.height = this.parameters.imageHeight
+	srcElement.style.width = this.parameters.displayWidth+'px'
+	srcElement.style.height = this.parameters.displayHeight+'px'
 
 	setTimeout(function(){
 		onReady && onReady()
@@ -96,10 +94,10 @@ THREEx.ArToolkitContext.prototype._initSourceVideo = function(onReady) {
 		srcElement.play()
 	})
 
-	srcElement.width = this.options.imageWidth
-	srcElement.height = this.options.imageHeight
-	srcElement.style.width = this.options.displayWidth+'px'
-	srcElement.style.height = this.options.displayHeight+'px'
+	srcElement.width = this.parameters.imageWidth
+	srcElement.height = this.parameters.imageHeight
+	srcElement.style.width = this.parameters.displayWidth+'px'
+	srcElement.style.height = this.parameters.displayHeight+'px'
 	
 	// wait until the video stream is ready
 	var interval = setInterval(function() {
@@ -117,8 +115,8 @@ THREEx.ArToolkitContext.prototype._initSourceWebcam = function(onReady) {
 
 	var srcElement = document.createElement('video');
 	document.body.appendChild(srcElement);
-	srcElement.style.width = this.options.displayWidth+'px'
-	srcElement.style.height = this.options.displayHeight+'px'
+	srcElement.style.width = this.parameters.displayWidth+'px'
+	srcElement.style.height = this.parameters.displayHeight+'px'
 
 
 	if (navigator.getUserMedia == false )	console.log("navigator.getUserMedia not present in your browser");
@@ -130,8 +128,8 @@ THREEx.ArToolkitContext.prototype._initSourceWebcam = function(onReady) {
 			audio: false,
 			video: {
 				mandatory: {
-					maxWidth: _this.options.imageWidth,
-					maxHeight: _this.options.imageHeight
+					maxWidth: _this.parameters.imageWidth,
+					maxHeight: _this.parameters.imageHeight
 		    		}
 		  	}
                 }
@@ -174,8 +172,8 @@ THREEx.ArToolkitContext.prototype._initSourceWebcam = function(onReady) {
 THREEx.ArToolkitContext.prototype._onSourceReady = function(onCompleted){
         var _this = this
 	
-	var width = this.options.imageWidth
-	var height = this.options.imageHeight
+	var width = this.parameters.imageWidth
+	var height = this.parameters.imageHeight
 
         console.log('ArToolkitContext: _onSourceReady width', width, 'height', height)
         _this.cameraParameters = new ARCameraParam(_this.parameters.cameraParametersUrl, function() {
