@@ -4,7 +4,12 @@
 - screenAspectRatio should be equal to artoolkitAspectRatio
   - this doesnt imply to have the same resolution
   - so technically i could definitly extract a part of video which has screenAspectRatio
-  - 
+  - well find the algo lazy mother fucker
+
+- Xmin, Ymin, Xmax, Ymax
+- coordinates are in video canvas 
+
+
 
 # Fix resolution issue
 - issue: aspect is not visually respected
