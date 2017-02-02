@@ -3,7 +3,7 @@
 <!-- three.js library -->
 <script src='vendor/three.js/build/three.js'></script>
 <!-- jsartookit -->
-<script src="../vendor/jsartoolkit/artoolkit.debug.js"></script>
+<script src="../vendor/jsartoolkit/artoolkit.min.js"></script>
 <script src="../vendor/jsartoolkit/artoolkit.api.js"></script>
 <!-- include threex.artoolkit -->
 <script src="../threex-artoolkitcontext.js"></script>
@@ -20,7 +20,7 @@
 		alpha: true
 	});
 	renderer.setClearColor(new THREE.Color('lightgrey'), 0)
-	renderer.setPixelRatio(1/2)
+	// renderer.setPixelRatio(1/2)
 	renderer.setSize( 640, 480 );
 
 	// renderer.setSize( 812, 783 );
@@ -66,11 +66,11 @@
 		cameraParametersUrl: '../aframe/examples/data/camera_para.dat',
 		detectionMode: 'mono'
 	}, {
-		// imageWidth : 320,
-		// imageHeight : 240,
-
-		imageWidth : 80*3,
-		imageHeight : 60*3,
+		imageWidth : 320,
+		imageHeight : 240,
+		// 
+		// imageWidth : 80*2,
+		// imageHeight : 60*2,
 		displayWidth : renderer.getSize().width,
 		displayHeight : renderer.getSize().height,
 	})

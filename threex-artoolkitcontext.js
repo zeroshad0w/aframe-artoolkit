@@ -111,6 +111,7 @@ THREEx.ArToolkitContext.prototype._initSourceVideo = function(onReady) {
 }
 
 THREEx.ArToolkitContext.prototype._initSourceWebcam = function(onReady) {
+	var _this = this
 	// TODO make it static
 	navigator.getUserMedia  = navigator.getUserMedia || navigator.webkitGetUserMedia || navigator.mozGetUserMedia || navigator.msGetUserMedia;
 

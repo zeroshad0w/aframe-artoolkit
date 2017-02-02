@@ -1,3 +1,9 @@
+# TODO merge this one into master
+- make the size in the normal options
+- port to all examples
+- merge to master
+
+
 # How to keep source image aspect
 - can we change the videoAspectRatio dynamically ?
 - there is 3 ratio: videoAspectRatio, artoolkitAspectRatio, screenAspectRatio
