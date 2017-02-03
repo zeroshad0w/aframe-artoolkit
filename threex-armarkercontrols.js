@@ -5,10 +5,15 @@ THREEx.ArMarkerControls = function(context, object3d, parameters){
 	this.context = context
 	// handle default parameters
 	this.parameters = {
+		// size of the marker in meter
 		size : parameters.debug !== undefined ? parameters.debug : 1,
+		// type of marker - ['pattern', 'barcode', 'unknown' ]
 		type : parameters.type !== undefined ? parameters.type : 'unknown',
+		// url of the pattern - IIF type='pattern'
 		patternUrl : parameters.patternUrl !== undefined ? parameters.patternUrl : null,
+		// value of the barcode - IIF type='barcode'
 		barcodeValue : parameters.barcodeValue !== undefined ? parameters.barcodeValue : null,
+		// change matrix mode - [modelViewMatrix, cameraTransformMatrix]
 		changeMatrixMode : parameters.changeMatrixMode !== undefined ? parameters.changeMatrixMode : 'modelViewMatrix',
 	}
 

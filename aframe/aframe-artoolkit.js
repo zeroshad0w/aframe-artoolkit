@@ -27,6 +27,26 @@ AFRAME.registerSystem('artoolkit', {
 			type: 'string',
 			default: 'data/camera_para.dat'
 		},
+		maxDetectionRate : {
+			type: 'number',
+			default: 60
+		},
+		imageWidth : {
+			type: 'number',
+			default: 640
+		},
+		imageHeight : {
+			type: 'number',
+			default: 480
+		},
+		displayWidth : {
+			type: 'number',
+			default: 640
+		},
+		displayHeight : {
+			type: 'number',
+			default: 480
+		},
 	},
 	init: function () {
 		var _this = this;

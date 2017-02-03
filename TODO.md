@@ -3,15 +3,17 @@
   - position/rotation
   - something similar to webvr pose
   - thus reusable with webvr
+  - how to do that ?
 - how to detect if there is a new image
   - it isnt that simple
-- simply set the maxDetectionRate, in artoolkit context
-  - and set this value to the video fps
-- if we want to reduce cpu usage, we can set maxDetectionRate below sourceVideo fps
-- how to get the sourceVideo fps
 
 # TODO merge this one into master
 - port new option in aframe-context
+  - maxDetectionRate : 30,
+  - imageWidth : 80*3,
+  - imageHeight : 60*3,
+  - displayWidth : renderer.getSize().width,
+  - displayHeight : renderer.getSize().height,
 
 # How to keep source image aspect
 - can we change the videoAspectRatio dynamically ?
@@ -34,6 +36,10 @@
 - LATER to have the video in webgl ? or in DOM ? should i care now ?
 
 
+- DONE simply set the maxDetectionRate, in artoolkit context
+  - and set this value to the video fps
+  - if we want to reduce cpu usage, we can set maxDetectionRate below sourceVideo fps
+- how to get the sourceVideo fps
 - DONE issue: the screen resolution and the image resolution should NOT be the same
   - displayWidth/displayHeight to have the resolution
   - imageWidth/Height are faster when smaller
