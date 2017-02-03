@@ -1,19 +1,15 @@
-# Only detect pose when the source image change
 - when no new image, do a motion prediction
   - position/rotation
   - something similar to webvr pose
   - thus reusable with webvr
   - how to do that ?
+  - do a basic one for now
 - how to detect if there is a new image
   - it isnt that simple
 
-# TODO merge this one into master
-- port new option in aframe-context
-  - maxDetectionRate : 30,
-  - imageWidth : 80*3,
-  - imageHeight : 60*3,
-  - displayWidth : renderer.getSize().width,
-  - displayHeight : renderer.getSize().height,
+- add the webworkers with this release ?
+- add the nft ?
+- how to handle the performance loss
 
 # How to keep source image aspect
 - can we change the videoAspectRatio dynamically ?
