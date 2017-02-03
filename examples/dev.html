@@ -2,6 +2,8 @@
 <meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
 <!-- three.js library -->
 <script src='vendor/three.js/build/three.js'></script>
+<script src="vendor/three.js/examples/js/libs/stats.min.js"></script>
+
 <!-- jsartookit -->
 <script src="../vendor/jsartoolkit5/build/artoolkit.min.js"></script>
 <script src="../vendor/jsartoolkit5/js/artoolkit.api.js"></script>
@@ -55,22 +57,22 @@
 
 
 	var arToolkitContext = new THREEx.ArToolkitContext({
-		sourceType : 'webcam',
+		// sourceType : 'webcam',
 
 		// sourceType : 'image',
 		// sourceUrl : '../aframe/examples/images/img.jpg',
 
-		// sourceType : 'video',
-		// sourceUrl: '../aframe/examples/videos/headtracking.mp4',
+		sourceType : 'video',
+		sourceUrl: '../aframe/examples/videos/headtracking.mp4',
 
 		cameraParametersUrl: '../aframe/examples/data/camera_para.dat',
 		detectionMode: 'mono',
 
-		// imageWidth : 320,
-		// imageHeight : 240,
-		// 
-		imageWidth : 80*3,
-		imageHeight : 60*3,
+		// imageWidth : 640*2,
+		// imageHeight : 480*2,
+		//
+		// imageWidth : 80*3,
+		// imageHeight : 60*3,
 		displayWidth : renderer.getSize().width,
 		displayHeight : renderer.getSize().height,
 	})
@@ -79,9 +81,28 @@
 	        var projectionMatrix = arToolkitContext.arController.getCameraMatrix();
 	        camera.projectionMatrix.fromArray(projectionMatrix);
 	})
+
+	var lastTime = -1
 	onRenderFcts.push(function(){
+		var video = arToolkitContext.srcElement
+
+		// TODO put this in arToolkitContext
+		// if( video.currentTime === lastTime ){
+		// 	console.log('skip this frame')
+		// 	return
+		// }
+		// lastTime = video.currentTime
+		
+		// if( video.readyState < video.HAVE_CURRENT_DATA ) {
+		// 	console.log('skip this frame')
+		// 	return
+		// }
+
 		arToolkitContext.update()
 	})
+	// arToolkitContext.srcElement.addEventListener('timeupdate', function(){
+	// 	console.log('timeupdate', arguments, Date())
+	// })
 
 	var markerRoot = new THREE.Group
 	scene.add(markerRoot)
@@ -120,10 +141,16 @@
 	//////////////////////////////////////////////////////////////////////////////////
 	//		render the whole thing on the page
 	//////////////////////////////////////////////////////////////////////////////////
+	var stats = new Stats();
+	document.body.appendChild( stats.dom );
+
 
 	// render the scene
 	onRenderFcts.push(function(){
+
 		renderer.render( scene, camera );
+		
+		stats.update();
 	})
 
 	// run the rendering loop

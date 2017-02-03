@@ -1,8 +1,19 @@
+# Only detect pose when the source image change
+- when no new image, do a motion prediction
+  - position/rotation
+  - something similar to webvr pose
+  - thus reusable with webvr
+- how to detect if there is a new image
+  - it isnt that simple
+- simply set the maxDetectionRate, in artoolkit context
+  - and set this value to the video fps
+- if we want to reduce cpu usage, we can set maxDetectionRate below sourceVideo fps
+- how to get the sourceVideo fps
+
 # TODO merge this one into master
 - make the size in the normal options
 - port to all examples
 - merge to master
-
 
 # How to keep source image aspect
 - can we change the videoAspectRatio dynamically ?
