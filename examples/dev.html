@@ -62,17 +62,19 @@
 		sourceType : 'image',
 		sourceUrl : '../aframe/examples/images/img.jpg',
 
-		// sourceType : 'video',
-		// sourceUrl: '../aframe/examples/videos/headtracking.mp4',
+		sourceType : 'video',
+		sourceUrl: '../aframe/examples/videos/headtracking.mp4',
 
 		cameraParametersUrl: '../aframe/examples/data/camera_para.dat',
 		detectionMode: 'mono',
 
+		// maxDetectionRate : 30,
+
 		// imageWidth : 640*2,
 		// imageHeight : 480*2,
-		//
 		imageWidth : 80*3,
 		imageHeight : 60*3,
+
 		displayWidth : renderer.getSize().width,
 		displayHeight : renderer.getSize().height,
 	})
@@ -108,8 +110,8 @@
 	scene.add(markerRoot)
 	var artoolkitMarker = new THREEx.ArMarkerControls(arToolkitContext, markerRoot, {
 		type : 'pattern',
-		patternUrl : '../aframe/examples/data/patt.hiro',
-		// patternUrl : '../aframe/examples/data/patt.kanji',
+		// patternUrl : '../aframe/examples/data/patt.hiro',
+		patternUrl : '../aframe/examples/data/patt.kanji',
 	})
 
 

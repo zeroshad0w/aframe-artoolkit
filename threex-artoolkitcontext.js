@@ -13,12 +13,14 @@ THREEx.ArToolkitContext = function(parameters){
 		detectionMode: parameters.detectionMode !== undefined ? parameters.detectionMode : 'color_and_matrix',
 		matrixCodeType: parameters.matrixCodeType !== undefined ? parameters.matrixCodeType : '3x3',
 		cameraParametersUrl: parameters.cameraParametersUrl !== undefined ? parameters.cameraParametersUrl : THREEx.ArToolkitContext.baseURL + 'parameters/camera_para.dat',
+		
+		// tune the maximum rate of pose detection in the source image
+		maxDetectionRate: parameters.maxDetectionRate !== undefined ? parameters.maxDetectionRate : 60,
 
-		maxDetectionRate: parameters.maxDetectionRate !== undefined ? parameters.maxDetectionRate : 30,
-
-
+		// resolution of at which we detect pose in the source image
 		imageWidth: parameters.imageWidth !== undefined ? parameters.imageWidth : 640,
 		imageHeight: parameters.imageHeight !== undefined ? parameters.imageHeight : 480,
+		// resolution displayed for the source 
 		displayWidth: parameters.displayWidth !== undefined ? parameters.displayWidth : 640,
 		displayHeight: parameters.displayHeight !== undefined ? parameters.displayHeight : 480,
 	}
@@ -235,7 +237,6 @@ THREEx.ArToolkitContext.prototype.update = function(){
         var arController = this.arController
         if (!arController) return;
 
-	
 	// honor this.parameters.maxDetectionRate
 	var present = performance.now()
 	if( this._updatedAt !== null && present - this._updatedAt < 1000/this.parameters.maxDetectionRate )	return

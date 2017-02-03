@@ -11,9 +11,7 @@
 - how to get the sourceVideo fps
 
 # TODO merge this one into master
-- make the size in the normal options
-- port to all examples
-- merge to master
+- port new option in aframe-context
 
 # How to keep source image aspect
 - can we change the videoAspectRatio dynamically ?
