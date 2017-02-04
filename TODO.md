@@ -1,15 +1,23 @@
-- when no new image, do a motion prediction
-  - position/rotation
-  - something similar to webvr pose
-  - thus reusable with webvr
-  - how to do that ?
-  - do a basic one for now
-- how to detect if there is a new image
+- how to detect if there is a new image in source video
   - it isnt that simple
 
 - add the webworkers with this release ?
 - add the nft ?
 - how to handle the performance loss
+
+
+# How to do motion prediction
+- when no new image to detect new pose, do a motion prediction
+- do a threex.motionpredictioncontrols
+  - do that in /threex.motionpredictioncontrols.js
+  - /examples/motionpredictioncontrols.html
+  - move targetObject to the left 10 per seconds
+  - display the controls.object which should move smoothly at 60fps
+- this is a controls with 2 objects, both have the same parent
+- controls.update() periodically, move the object toward the target
+  - console.assert(this.object.parent === this.targetObject.parent)
+  - at the begining do simply a copy of this.object/.targetObject
+- .setPosition
 
 # How to keep source image aspect
 - can we change the videoAspectRatio dynamically ?
@@ -24,12 +32,25 @@
 
 
 
+# Idea about performance
+- more than 70% of the time is used to copy the image in the HEAP
+  - .drawImage, .getImageData
+  - this.dataHeap.set( data ) is 43% of the total
+  - if i can send just a pointer on the data... i gain 43% in one shot
+- ctx.imageSmoothingEnabled = false - what is the influence on performance and result ?
+- performance remove copy to heap
+  - http://kapadia.github.io/emscripten/2013/09/13/emscripten-pointers-and-pointers.html
+  - this explains how to pass a pointer from a typearray to c++ 
+  - this would avoid the dataHeap.set() - 43%
+  
 # Fix resolution issue
 - issue: aspect is not visually respected
 - issue: not dynamic, handle window resize
 
 - LATER relation with stereo display ?
 - LATER to have the video in webgl ? or in DOM ? should i care now ?
+- LATER support .setThresholdMode(), put it in demo to test
+- LATER support .setLabelingMode()
 
 
 - DONE simply set the maxDetectionRate, in artoolkit context

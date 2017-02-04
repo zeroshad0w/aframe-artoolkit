@@ -20,7 +20,7 @@ THREEx.ArToolkitContext = function(parameters){
 		
 		// url of the camera parameters
 		cameraParametersUrl: parameters.cameraParametersUrl !== undefined ? parameters.cameraParametersUrl : THREEx.ArToolkitContext.baseURL + 'parameters/camera_para.dat',
-		
+
 		// tune the maximum rate of pose detection in the source image
 		maxDetectionRate: parameters.maxDetectionRate !== undefined ? parameters.maxDetectionRate : 60,
 
@@ -242,14 +242,33 @@ THREEx.ArToolkitContext.prototype._onSourceReady = function(onCompleted){
 THREEx.ArToolkitContext.prototype.update = function(){
 	// be sure arController is fully initialized
         var arController = this.arController
-        if (!arController) return;
+        if (!arController) return false;
 
 	// honor this.parameters.maxDetectionRate
 	var present = performance.now()
-	if( this._updatedAt !== null && present - this._updatedAt < 1000/this.parameters.maxDetectionRate )	return
+	if( this._updatedAt !== null && present - this._updatedAt < 1000/this.parameters.maxDetectionRate ){
+		return false
+	}
 	this._updatedAt = present
 
-	// console.log('do detect')
+	// TODO put this in arToolkitContext
+	// var video = arToolkitContext.srcElement
+	// if( video.currentTime === lastTime ){
+	// 	console.log('skip this frame')
+	// 	return
+	// }
+	// lastTime = video.currentTime
+	
+	// if( video.readyState < video.HAVE_CURRENT_DATA ) {
+	// 	console.log('skip this frame')
+	// 	return
+	// }
+
+	// arToolkitContext.srcElement.addEventListener('timeupdate', function(){
+	// 	console.log('timeupdate', arguments, Date())
+	// })
+
+
 	// mark all markers to invisible before processing this frame
 	this._arMarkersControls.forEach(function(artoolkitMarker){
 		artoolkitMarker.object3d.visible = false
@@ -257,6 +276,9 @@ THREEx.ArToolkitContext.prototype.update = function(){
 
 	// process this frame
 	arController.process(this.srcElement)
+
+	// return true as we processed the frame
+	return true;
 }
 
 ////////////////////////////////////////////////////////////////////////////////

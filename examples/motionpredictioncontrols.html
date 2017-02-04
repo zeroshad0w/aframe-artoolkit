@@ -10,6 +10,7 @@
 <!-- include threex.artoolkit -->
 <script src="../threex-artoolkitcontext.js"></script>
 <script src="../threex-armarkercontrols.js"></script>
+<script src="../threex-motionpredictioncontrols.js"></script>
 
 <body style='margin : 0px'><script>
 	//////////////////////////////////////////////////////////////////////////////////
@@ -38,7 +39,9 @@
 	var onRenderFcts= [];
 
 	// init scene and camera
-	var scene	= new THREE.Scene();
+	var scene = new THREE.Scene();
+	var camera = new THREE.PerspectiveCamera( 70, window.innerWidth / window.innerHeight, 0.1, 10 );
+	scene.add( camera );
 
 	var ambient = new THREE.AmbientLight( 0x666666 );
 	scene.add( ambient );
@@ -50,51 +53,6 @@
 	//////////////////////////////////////////////////////////////////////////////////
 	//		Comments
 	//////////////////////////////////////////////////////////////////////////////////
-
-	// Create a camera and a marker root object for your Three.js scene.
-	var camera = new THREE.Camera();
-	scene.add(camera);
-
-
-	var arToolkitContext = new THREEx.ArToolkitContext({
-		// sourceType : 'webcam',
-
-		sourceType : 'image',
-		sourceUrl : '../aframe/examples/images/img.jpg',
-
-		// sourceType : 'video',
-		// sourceUrl: '../aframe/examples/videos/headtracking.mp4',
-
-		cameraParametersUrl: '../aframe/examples/data/camera_para.dat',
-		detectionMode: 'mono',
-
-		maxDetectionRate : 30,
-
-		// imageWidth : 640*2,
-		// imageHeight : 480*2,
-		imageWidth : 80*3,
-		imageHeight : 60*3,
-
-		displayWidth : renderer.getSize().width,
-		displayHeight : renderer.getSize().height,
-	})
-	// update the camera projectionMatrix
-	arToolkitContext.addEventListener( 'ready', function ( event ) {
-	        var projectionMatrix = arToolkitContext.arController.getCameraMatrix();
-	        camera.projectionMatrix.fromArray(projectionMatrix);
-	})
-
-	onRenderFcts.push(function(){
-		var hasBeenUpdated = arToolkitContext.update()
-	})
-
-	var markerRoot = new THREE.Group
-	scene.add(markerRoot)
-	var artoolkitMarker = new THREEx.ArMarkerControls(arToolkitContext, markerRoot, {
-		type : 'pattern',
-		patternUrl : '../aframe/examples/data/patt.hiro',
-		// patternUrl : '../aframe/examples/data/patt.kanji',
-	})
 
 
 	//////////////////////////////////////////////////////////////////////////////////
@@ -108,18 +66,33 @@
 		opacity: 0.5,
 		side: THREE.DoubleSide
 	}); 
-	var mesh	= new THREE.Mesh( geometry, material );
-	mesh.position.z	= geometry.parameters.height/2
-	markerRoot.add( mesh );
+	var meshCube = new THREE.Mesh( geometry, material );
+	meshCube.position.z = -3
+	scene.add( meshCube );
+	var cubeControls = new THREEx.MotionPredictionControls(meshCube)
+	onRenderFcts.push(function(){
+		cubeControls.update()
+	})
+	
+
 	
 	var geometry	= new THREE.TorusKnotGeometry(0.3,0.1,32,32);
 	var material	= new THREE.MeshNormalMaterial(); 
-	var mesh	= new THREE.Mesh( geometry, material );
-	mesh.position.z	= 0.5
-	markerRoot.add( mesh );
+	var meshTorus	= new THREE.Mesh( geometry, material );
+	meshTorus.position.z	= -3
+	meshTorus.position.x	= -2
+	
+	scene.add( meshTorus );
+	
+	setInterval(function(){
+		// meshTorus.position.x += 0.1
+		// meshTorus.quaternion.x += 0.2
+
+		cubeControls.setKnownPosition(meshTorus.position, meshTorus.quaternion)
+	}, 1000/10)
 	
 	onRenderFcts.push(function(){
-		mesh.rotation.x += 0.1
+		meshTorus.rotateX(0.1)
 	})
 
 	//////////////////////////////////////////////////////////////////////////////////
