@@ -73,9 +73,7 @@
 	onRenderFcts.push(function(){
 		cubeControls.update()
 	})
-	
-
-	
+		
 	var geometry	= new THREE.TorusKnotGeometry(0.3,0.1,32,32);
 	var material	= new THREE.MeshNormalMaterial(); 
 	var meshTorus	= new THREE.Mesh( geometry, material );
@@ -85,15 +83,15 @@
 	scene.add( meshTorus );
 	
 	setInterval(function(){
-		// meshTorus.position.x += 0.1
-		// meshTorus.quaternion.x += 0.2
+		meshTorus.position.x += 0.1
+		meshTorus.rotateX(0.1)
 
 		cubeControls.setKnownPosition(meshTorus.position, meshTorus.quaternion)
 	}, 1000/10)
 	
-	onRenderFcts.push(function(){
-		meshTorus.rotateX(0.1)
-	})
+	// onRenderFcts.push(function(){
+		// meshTorus.rotateX(0.1)
+	// })
 
 	//////////////////////////////////////////////////////////////////////////////////
 	//		render the whole thing on the page

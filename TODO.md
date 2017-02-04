@@ -1,3 +1,7 @@
+- finish the resize
+  - handle it in the context
+  - when you init the source
+
 - how to detect if there is a new image in source video
   - it isnt that simple
 

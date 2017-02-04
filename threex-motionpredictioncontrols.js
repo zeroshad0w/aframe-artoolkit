@@ -33,6 +33,7 @@ THREEx.MotionPredictionControls.prototype.update = function () {
 	this.object.position.copy(this._lastKnownPosition)
 	this.object.position.add(this._linearVelocity.clone().multiplyScalar(lastKnownPoseAge))
 	// update position from _lastKnownQuaternion and _angularVelocity
+	// FIXME here add the angularVelocity
 	this.object.quaternion.copy(this._lastKnownQuaternion)
 };
 
@@ -45,6 +46,7 @@ THREEx.MotionPredictionControls.prototype.setKnownPosition = function (newPositi
 		this._linearVelocity.copy(newPosition)
 			.sub(this._lastKnownPosition)
 			.divideScalar(delay)
+		// TODO this one is wrong we need to devide by delay
 		this._angularVelocity.copy(newQuaternion)
 			.multiply(this._lastKnownQuaternion.clone().inverse())
 			// .divideScalar(delay)

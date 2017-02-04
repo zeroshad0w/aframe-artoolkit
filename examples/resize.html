@@ -100,25 +100,26 @@
 
 	
 	window.addEventListener('resize', onResize)
-	setInterval(function(){
-		onResize()
-	}, 100)
+	// setInterval(function(){
+	// 	onResize()
+	// }, 100)
 	function onResize(){
-		// compute screenAspect
-		var screenAspect = window.innerWidth / window.innerHeight
-		// compute sourceAspect
-		var srcElement = arToolkitContext.srcElement
+		// compute sourceWidth, sourceHeight
 		if( arToolkitContext.srcElement.nodeName === "IMG" ){
-			var sourceWidth = srcElement.naturalWidth
-			var sourceHeight = srcElement.naturalHeight
+			var sourceWidth = arToolkitContext.srcElement.naturalWidth
+			var sourceHeight = arToolkitContext.srcElement.naturalHeight
 		}else if( arToolkitContext.srcElement.nodeName === "VIDEO" ){
-			var sourceWidth = srcElement.videoWidth
-			var sourceHeight = srcElement.videoHeight
+			var sourceWidth = arToolkitContext.srcElement.videoWidth
+			var sourceHeight = arToolkitContext.srcElement.videoHeight
 		}else{
 			console.assert(false)
 		}
 		
+		// compute sourceAspect
 		var sourceAspect = sourceWidth / sourceHeight
+		// compute screenAspect
+		var screenAspect = window.innerWidth / window.innerHeight
+
 		console.log('sourceAspect', sourceAspect)
 		console.log('screenAspect', screenAspect)
 		
@@ -135,8 +136,8 @@
 			arToolkitContext.srcElement.style.height = window.innerHeight+'px'
 			renderer.domElement.style.height = window.innerHeight+'px'
 		}else{
-			// var screenAspect = window.innerWidth / height
-			var newHeight = sourceHeight * (window.innerWidth / sourceWidth)
+			var newHeight = 1 / (sourceAspect / window.innerWidth)
+			// var newHeight = sourceHeight * (window.innerWidth / sourceWidth)
 
 			console.log('newHeight', newHeight, window.innerWidth)
 
