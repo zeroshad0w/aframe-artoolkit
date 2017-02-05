@@ -1,6 +1,4 @@
 - finish the resize
-  - push it all in context on a onResize
-  - make the renderer copy the canvas css, after the onResize
   - remove the 640x480 of aframe demo
 
 - how to detect if there is a new image in source video

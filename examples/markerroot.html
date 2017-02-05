@@ -58,9 +58,28 @@
 	})
 	// update the camera projectionMatrix
 	arToolkitContext.addEventListener( 'ready', function ( event ) {
+		// copy projection matrix to camera
 	        var projectionMatrix = arToolkitContext.arController.getCameraMatrix();
 	        camera.projectionMatrix.fromArray(projectionMatrix);
+		// handle resize of renderer
+		onResize()
 	})
+	// handle resize
+	window.addEventListener('resize', onResize)	
+	function onResize(){
+		// handle arToolkitContext resize
+		arToolkitContext.onResize()
+
+		// copy arToolkitContext.srcElement position to renderer.domElement
+		var domElement = renderer.domElement
+		var srcElement = arToolkitContext.srcElement
+		domElement.style.width = srcElement.style.width
+		domElement.style.height = srcElement.style.height	
+		domElement.style.marginLeft = srcElement.style.marginLeft
+		domElement.style.marginTop = srcElement.style.marginTop		
+	}
+
+	// update artoolkit on every frame
 	onRenderFcts.push(function(){
 		arToolkitContext.update()
 	})

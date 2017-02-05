@@ -179,12 +179,54 @@ THREEx.ArToolkitContext.prototype._initSourceWebcam = function(onReady) {
 	return srcElement
 }
 
+THREEx.ArToolkitContext.prototype.onResize = function(){
+	// compute sourceWidth, sourceHeight
+	if( this.srcElement.nodeName === "IMG" ){
+		var sourceWidth = this.srcElement.naturalWidth
+		var sourceHeight = this.srcElement.naturalHeight
+	}else if( this.srcElement.nodeName === "VIDEO" ){
+		var sourceWidth = this.srcElement.videoWidth
+		var sourceHeight = this.srcElement.videoHeight
+	}else{
+		console.assert(false)
+	}
+	
+	// compute sourceAspect
+	var sourceAspect = sourceWidth / sourceHeight
+	// compute screenAspect
+	var screenAspect = window.innerWidth / window.innerHeight
+
+	// if screenAspect < sourceAspect, then change the width, else change the height
+	if( screenAspect < sourceAspect ){
+		// compute newWidth and set .width/.marginLeft
+		var newWidth = sourceAspect * window.innerHeight
+		this.srcElement.style.width = newWidth+'px'
+		this.srcElement.style.marginLeft = -(newWidth-window.innerWidth)/2+'px'
+		
+		// init style.height/.marginTop to normal value
+		this.srcElement.style.height = window.innerHeight+'px'
+		this.srcElement.style.marginTop = '0px'
+
+	}else{
+		// compute newHeight and set .height/.marginTop
+		var newHeight = 1 / (sourceAspect / window.innerWidth)
+		this.srcElement.style.height = newHeight+'px'
+		this.srcElement.style.marginTop = -(newHeight-window.innerHeight)/2+'px'
+		
+		// init style.width/.marginLeft to normal value
+		this.srcElement.style.width = window.innerWidth+'px'
+		this.srcElement.style.marginLeft = '0px'
+	}
+}
+
 
 //////////////////////////////////////////////////////////////////////////////
 //		Code Separator
 //////////////////////////////////////////////////////////////////////////////
 THREEx.ArToolkitContext.prototype._onSourceReady = function(onCompleted){
         var _this = this
+	
+	this.onResize()
 	
 	var width = this.parameters.imageWidth
 	var height = this.parameters.imageHeight
@@ -229,7 +271,7 @@ THREEx.ArToolkitContext.prototype._onSourceReady = function(onCompleted){
 		console.assert(matrixCodeType !== undefined)
 		arController.setMatrixCodeType(matrixCodeType);
 
-		console.warn('arController fully initialized')
+		// console.warn('arController fully initialized')
 
 		// notify
                 onCompleted && onCompleted()                
