@@ -1,13 +1,15 @@
 - finish the resize
-  - handle it in the context
-  - when you init the source
+  - push it all in context on a onResize
+  - make the renderer copy the canvas css, after the onResize
+  - remove the 640x480 of aframe demo
 
 - how to detect if there is a new image in source video
   - it isnt that simple
 
+
 - add the webworkers with this release ?
 - add the nft ?
-- how to handle the performance loss
+- how to handle the performance loss 
 
 
 # How to do motion prediction
@@ -22,18 +24,6 @@
   - console.assert(this.object.parent === this.targetObject.parent)
   - at the begining do simply a copy of this.object/.targetObject
 - .setPosition
-
-# How to keep source image aspect
-- can we change the videoAspectRatio dynamically ?
-- there is 3 ratio: videoAspectRatio, artoolkitAspectRatio, screenAspectRatio
-- screenAspectRatio should be equal to artoolkitAspectRatio
-  - this doesnt imply to have the same resolution
-  - so technically i could definitly extract a part of video which has screenAspectRatio
-  - well find the algo lazy mother fucker
-
-- Xmin, Ymin, Xmax, Ymax
-- coordinates are in video canvas 
-
 
 
 # Idea about performance

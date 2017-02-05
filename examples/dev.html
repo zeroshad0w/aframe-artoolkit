@@ -82,8 +82,6 @@
 	arToolkitContext.addEventListener( 'ready', function ( event ) {
 	        var projectionMatrix = arToolkitContext.arController.getCameraMatrix();
 	        camera.projectionMatrix.fromArray(projectionMatrix);
-
-		onResize()
 	})
 
 	onRenderFcts.push(function(){
@@ -97,60 +95,6 @@
 		// patternUrl : '../aframe/examples/data/patt.hiro',
 		patternUrl : '../aframe/examples/data/patt.kanji',
 	})
-
-	
-	window.addEventListener('resize', onResize)
-	setInterval(function(){
-		onResize()
-	}, 100)
-	function onResize(){
-		// compute screenAspect
-		var screenAspect = window.innerWidth / window.innerHeight
-		// compute sourceAspect
-		var srcElement = arToolkitContext.srcElement
-		if( arToolkitContext.srcElement.nodeName === "IMG" ){
-			var sourceWidth = srcElement.naturalWidth
-			var sourceHeight = srcElement.naturalHeight
-		}else if( arToolkitContext.srcElement.nodeName === "VIDEO" ){
-			var sourceWidth = srcElement.videoWidth
-			var sourceHeight = srcElement.videoHeight
-		}else{
-			console.assert(false)
-		}
-		
-		var sourceAspect = sourceWidth / sourceHeight
-		console.log('sourceAspect', sourceAspect)
-		console.log('screenAspect', screenAspect)
-		
-		if( screenAspect < sourceAspect ){
-			var newWidth = sourceAspect * window.innerHeight
-			console.log('newWidth', newWidth)
-
-			arToolkitContext.srcElement.style.width = newWidth+'px'
-			arToolkitContext.srcElement.style.marginLeft = -(newWidth-window.innerWidth)/2+'px'
-
-			renderer.domElement.style.width = newWidth+'px'
-			renderer.domElement.style.marginLeft = -( newWidth - window.innerWidth ) /2+'px'
-						
-			arToolkitContext.srcElement.style.height = window.innerHeight+'px'
-			renderer.domElement.style.height = window.innerHeight+'px'
-		}else{
-			// var screenAspect = window.innerWidth / height
-			var newHeight = sourceHeight * (window.innerWidth / sourceWidth)
-
-			console.log('newHeight', newHeight, window.innerWidth)
-
-			arToolkitContext.srcElement.style.height = newHeight+'px'
-			arToolkitContext.srcElement.style.marginTop = -(newHeight-window.innerHeight)/2+'px'
-			
-			renderer.domElement.style.height = newHeight+'px'
-			renderer.domElement.style.marginTop = -( newHeight - window.innerHeight ) /2+'px'
-						
-
-			arToolkitContext.srcElement.style.width = window.innerWidth+'px'
-			renderer.domElement.style.width = window.innerWidth+'px'
-		}
-	}
 
 	//////////////////////////////////////////////////////////////////////////////////
 	//		add an object in the scene

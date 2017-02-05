@@ -1,0 +1,19 @@
+<body>
+
+<script src='../workerrpcmain.js'></script>
+<script>
+	// create the webworker
+	var worker = new Worker('../threex-artoolkitworker.js');
+	
+	var workerRpc = new WorkerRPCMain(worker)
+	
+	
+	// worker.postMessage({
+	// 	method: method,
+	// 	id: id,
+	// 	callID: callID,
+	// 	arguments: arguments
+	// }, transferables);
+	
+</script>
+</body>
