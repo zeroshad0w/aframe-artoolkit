@@ -1,13 +1,9 @@
 function WorkerRPCMain(worker){
 
-	this.callID = 0;
-	this.callbacks = {};
-	this.listeners = {};
-
 	this._worker = worker
 }
 
-WorkerRPCMain.prototype.call = function(id, method, arguments, transferables, callback) {
+WorkerRPCMain.prototype.call = function(method) {
 	var callID = this.callID++;
 	
 	if (typeof transferables === 'function') {
@@ -18,9 +14,9 @@ WorkerRPCMain.prototype.call = function(id, method, arguments, transferables, ca
 	this.callbacks[callID] = callback;
 
 	this._worker.postMessage({
-		// method: method,
-		// id: id,
-		// callID: callID,
-		// arguments: arguments
+		method: method,
+		id: id,
+		callID: callID,
+		arguments: args
 	}, transferables);
 };

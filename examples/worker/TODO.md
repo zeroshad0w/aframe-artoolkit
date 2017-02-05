@@ -1,0 +1,4 @@
+- make the initiliation of the video out of artoolkit.context
+- it is just another class which feed the context
+- it is required because the webworker doesnt have his own srcElement
+- i can provide my own sourceElement to ArToolkitContext ctor

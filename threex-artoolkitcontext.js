@@ -36,6 +36,19 @@ THREEx.ArToolkitContext = function(parameters){
         this.arController = null;
         this.cameraParameters = null
 	this._arMarkersControls = []
+	
+	// this.init()
+}
+
+THREEx.ArToolkitContext.baseURL = '../'
+
+// Mixin the EventDispatcher.prototype with the custom object prototype
+Object.assign( THREEx.ArToolkitContext.prototype, THREE.EventDispatcher.prototype );
+
+
+
+THREEx.ArToolkitContext.prototype.init = function(){
+	var _this = this
         this._initSource(function onSourceReady(){
                 console.log('ready')
                 _this._onSourceReady(function onCompleted(){
@@ -43,12 +56,7 @@ THREEx.ArToolkitContext = function(parameters){
 			_this.dispatchEvent( { type: 'ready' } );
                 })
         })	
-}
-
-THREEx.ArToolkitContext.baseURL = '../'
-
-// Mixin the EventDispatcher.prototype with the custom object prototype
-Object.assign( THREEx.ArToolkitContext.prototype, THREE.EventDispatcher.prototype );
+} 
 
 THREEx.ArToolkitContext.prototype._initSource = function(onReady) {
         if( this.parameters.sourceType === 'image' ){
@@ -180,6 +188,8 @@ THREEx.ArToolkitContext.prototype._initSourceWebcam = function(onReady) {
 }
 
 THREEx.ArToolkitContext.prototype.onResize = function(){
+	var screenWidth = window.innerWidth
+	var screenHeight = window.innerHeight
 	// compute sourceWidth, sourceHeight
 	if( this.srcElement.nodeName === "IMG" ){
 		var sourceWidth = this.srcElement.naturalWidth
@@ -194,27 +204,27 @@ THREEx.ArToolkitContext.prototype.onResize = function(){
 	// compute sourceAspect
 	var sourceAspect = sourceWidth / sourceHeight
 	// compute screenAspect
-	var screenAspect = window.innerWidth / window.innerHeight
+	var screenAspect = screenWidth / screenHeight
 
 	// if screenAspect < sourceAspect, then change the width, else change the height
 	if( screenAspect < sourceAspect ){
 		// compute newWidth and set .width/.marginLeft
-		var newWidth = sourceAspect * window.innerHeight
+		var newWidth = sourceAspect * screenHeight
 		this.srcElement.style.width = newWidth+'px'
-		this.srcElement.style.marginLeft = -(newWidth-window.innerWidth)/2+'px'
+		this.srcElement.style.marginLeft = -(newWidth-screenWidth)/2+'px'
 		
 		// init style.height/.marginTop to normal value
-		this.srcElement.style.height = window.innerHeight+'px'
+		this.srcElement.style.height = screenHeight+'px'
 		this.srcElement.style.marginTop = '0px'
 
 	}else{
 		// compute newHeight and set .height/.marginTop
-		var newHeight = 1 / (sourceAspect / window.innerWidth)
+		var newHeight = 1 / (sourceAspect / screenWidth)
 		this.srcElement.style.height = newHeight+'px'
-		this.srcElement.style.marginTop = -(newHeight-window.innerHeight)/2+'px'
+		this.srcElement.style.marginTop = -(newHeight-screenHeight)/2+'px'
 		
 		// init style.width/.marginLeft to normal value
-		this.srcElement.style.width = window.innerWidth+'px'
+		this.srcElement.style.width = screenWidth+'px'
 		this.srcElement.style.marginLeft = '0px'
 	}
 }

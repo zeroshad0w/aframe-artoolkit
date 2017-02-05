@@ -1,0 +1,12 @@
+# How to do motion prediction
+- when no new image to detect new pose, do a motion prediction
+- do a threex.motionpredictioncontrols
+  - do that in /threex.motionpredictioncontrols.js
+  - /examples/motionpredictioncontrols.html
+  - move targetObject to the left 10 per seconds
+  - display the controls.object which should move smoothly at 60fps
+- this is a controls with 2 objects, both have the same parent
+- controls.update() periodically, move the object toward the target
+  - console.assert(this.object.parent === this.targetObject.parent)
+  - at the begining do simply a copy of this.object/.targetObject
+- .setPosition

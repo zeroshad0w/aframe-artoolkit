@@ -1,15 +1,23 @@
 <body>
 
-<script src='../workerrpcmain.js'></script>
 <script>
 	// create the webworker
 	var worker = new Worker('../threex-artoolkitworker.js');
 	
-	var workerRpc = new WorkerRPCMain(worker)
-	
-	workerRpc.call(function(){
-		
+// 	first.onchange = function() {
+//   myWorker.postMessage([first.value,second.value]);
+//   console.log('Message posted to worker');
+// }
+	worker.postMessage({
+		method: 'newContext',
+		contextParameters : {
+			cameraParametersUrl: '../aframe/examples/data/camera_para.dat',
+			detectionMode: 'mono'
+		}
 	})
+	worker.onmessage = function(event){
+		console.log('main thread received a message')
+	}
 	
 	// worker.postMessage({
 	// 	method: method,
