@@ -1,4 +1,8 @@
 # How to do motion prediction
+
+- http://math.stackexchange.com/questions/160908/how-to-get-angular-velocity-from-difference-orientation-quaternion-and-time
+- http://www.euclideanspace.com/physics/kinematics/angularvelocity/quatDiff1stAttempt.htm
+
 - when no new image to detect new pose, do a motion prediction
 - do a threex.motionpredictioncontrols
   - do that in /threex.motionpredictioncontrols.js

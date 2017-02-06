@@ -178,6 +178,7 @@ THREEx.ArToolkitContext.prototype._initSourceWebcam = function(onReady) {
 	return srcElement
 }
 
+
 THREEx.ArToolkitContext.prototype.onResize = function(){
 	var screenWidth = window.innerWidth
 	var screenHeight = window.innerHeight

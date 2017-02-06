@@ -1,0 +1,3 @@
+- so make jsartoolkit in worker
+- and normal threex to use worker or not
+- put all kind of marker in the barcode/pattern/nft/unknown

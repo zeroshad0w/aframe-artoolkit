@@ -46,6 +46,9 @@ THREEx.MotionPredictionControls.prototype.setKnownPosition = function (newPositi
 		this._linearVelocity.copy(newPosition)
 			.sub(this._lastKnownPosition)
 			.divideScalar(delay)
+
+// http://math.stackexchange.com/questions/160908/how-to-get-angular-velocity-from-difference-orientation-quaternion-and-time
+// http://www.euclideanspace.com/physics/kinematics/angularvelocity/quatDiff1stAttempt.htm
 		// TODO this one is wrong we need to devide by delay
 		this._angularVelocity.copy(newQuaternion)
 			.multiply(this._lastKnownQuaternion.clone().inverse())
