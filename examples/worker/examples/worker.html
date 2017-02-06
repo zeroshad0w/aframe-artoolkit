@@ -5,12 +5,14 @@
 	var worker = new Worker('../workerrpcworker.js');
 	
 	worker.postMessage({
+		type: 'ArToolkitContext',
 		method: 'new',
 		args : [{
 			cameraParametersUrl: '../aframe/examples/data/camera_para.dat',
 			detectionMode: 'mono'
 		}]
 	})
+	
 	worker.onmessage = function(event){
 		console.log('main thread received a message', event)
 	}

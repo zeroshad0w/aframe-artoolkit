@@ -10,5 +10,5 @@
 - it is just another class which feed the context
 - it is required because the webworker doesnt have his own srcElement
 - i can provide my own sourceElement to ArToolkitContext ctor
-- remove the three.js EventDispatcher
+- DONE remove the three.js EventDispatcher
 - remove three.js dependancy in worker ?
