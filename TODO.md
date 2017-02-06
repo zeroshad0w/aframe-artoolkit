@@ -1,3 +1,4 @@
+- port webcam to new standard - https://developer.mozilla.org/en-US/docs/Web/API/MediaDevices/enumerateDevices
 - in ArToolkitContext rename parameters.imageWidth in parameters.sourceWidth
 - finish the resize
   - remove the 640x480 of aframe demo
