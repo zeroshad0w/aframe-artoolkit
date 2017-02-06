@@ -36,50 +36,41 @@ THREEx.ArToolkitContext = function(parameters){
         this.arController = null;
         this.cameraParameters = null
 	this._arMarkersControls = []
-	
-	// this.init()
 }
 
 THREEx.ArToolkitContext.baseURL = '../'
 
-// Mixin the EventDispatcher.prototype with the custom object prototype
-Object.assign( THREEx.ArToolkitContext.prototype, THREE.EventDispatcher.prototype );
-
-
-
-THREEx.ArToolkitContext.prototype.init = function(){
+//////////////////////////////////////////////////////////////////////////////
+//		Code Separator
+//////////////////////////////////////////////////////////////////////////////
+THREEx.ArToolkitContext.prototype.initSource = function(onReady){
 	var _this = this
-        this._initSource(function onSourceReady(){
-                console.log('ready')
-                _this._onSourceReady(function onCompleted(){
-                        console.log('completed')
-			_this.dispatchEvent( { type: 'ready' } );
-                })
-        })	
-} 
 
-THREEx.ArToolkitContext.prototype._initSource = function(onReady) {
         if( this.parameters.sourceType === 'image' ){
-                var srcElement = this._initSourceImage(function(){
-                        onReady()
-                })                        
+                var srcElement = this._initSourceImage(onSourceReady)                        
         }else if( this.parameters.sourceType === 'video' ){
-                var srcElement = this._initSourceVideo(function(){
-                        onReady()
-                })                        
+                var srcElement = this._initSourceVideo(onSourceReady)                        
         }else if( this.parameters.sourceType === 'webcam' ){
-                var srcElement = this._initSourceWebcam(function(){
-                        onReady()
-                })                        
+                var srcElement = this._initSourceWebcam(onSourceReady)                        
         }else{
                 console.assert(false)
         }
+
 	// attach
         this.srcElement = srcElement
         this.srcElement.style.position = 'absolute'
         this.srcElement.style.top = '0px'
         this.srcElement.style.zIndex = '-2'	
-};
+
+	return
+        function onSourceReady(){
+                console.log('ready')
+                _this._onSourceReady(function onCompleted(){
+                        console.log('completed')
+			onReady && onReady()
+                })
+        }
+} 
 
 THREEx.ArToolkitContext.prototype._initSourceImage = function(onReady) {
 	// TODO make it static

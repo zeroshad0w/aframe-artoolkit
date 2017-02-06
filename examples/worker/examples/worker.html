@@ -2,29 +2,17 @@
 
 <script>
 	// create the webworker
-	var worker = new Worker('../threex-artoolkitworker.js');
+	var worker = new Worker('../workerrpcworker.js');
 	
-// 	first.onchange = function() {
-//   myWorker.postMessage([first.value,second.value]);
-//   console.log('Message posted to worker');
-// }
 	worker.postMessage({
-		method: 'newContext',
-		contextParameters : {
+		method: 'new',
+		args : [{
 			cameraParametersUrl: '../aframe/examples/data/camera_para.dat',
 			detectionMode: 'mono'
-		}
+		}]
 	})
 	worker.onmessage = function(event){
-		console.log('main thread received a message')
+		console.log('main thread received a message', event)
 	}
-	
-	// worker.postMessage({
-	// 	method: method,
-	// 	id: id,
-	// 	callID: callID,
-	// 	arguments: arguments
-	// }, transferables);
-	
 </script>
 </body>

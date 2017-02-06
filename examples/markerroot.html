@@ -48,16 +48,15 @@
 	var camera = new THREE.Camera();
 	scene.add(camera);
 
-
+	// create atToolkitContext
 	var arToolkitContext = new THREEx.ArToolkitContext({
-		// sourceType : 'webcam',
 		sourceType : 'image',
 		sourceUrl : '../aframe/examples/images/img.jpg',
 		cameraParametersUrl: '../aframe/examples/data/camera_para.dat',
 		detectionMode: 'mono'
 	})
-	// update the camera projectionMatrix
-	arToolkitContext.addEventListener( 'ready', function ( event ) {
+	// we init the source
+	arToolkitContext.initSource(function(){
 		// copy projection matrix to camera
 	        var projectionMatrix = arToolkitContext.arController.getCameraMatrix();
 	        camera.projectionMatrix.fromArray(projectionMatrix);
