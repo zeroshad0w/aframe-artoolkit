@@ -33,7 +33,8 @@ THREEx.ArToolkitContext = function(parameters){
 	}
 	
         this.srcElement = null
-        this.arController = null;
+	this.arController = null;
+	this._proxy = null;
         this.cameraParameters = null
 	this._arMarkersControls = []
 }
@@ -134,8 +135,7 @@ THREEx.ArToolkitContext.prototype._initSourceWebcam = function(onReady) {
 
 	if (navigator.getUserMedia == false )	console.log("navigator.getUserMedia not present in your browser");
 
-        // get the media sources
-        MediaStreamTrack.getSources(function(sourceInfos) {
+	navigator.mediaDevices.enumerateDevices().then(function(devices) {
                 // define getUserMedia() constraints
                 var constraints = {
 			audio: false,
@@ -147,13 +147,23 @@ THREEx.ArToolkitContext.prototype._initSourceWebcam = function(onReady) {
 		  	}
                 }
 
+		devices.forEach(function(device) {
+			if( device.kind !== 'videoinput' )	return
+			// console.log(device.kind + ": " + device.label +
+			// " id = " + device.deviceId);
+			// console.log(device)
+			constraints.video.optional = [{sourceId: device.deviceId}]
+		});
+
+		// OLD API
                 // it it finds the videoSource 'environment', modify constraints.video
-                for (var i = 0; i != sourceInfos.length; ++i) {
-                        var sourceInfo = sourceInfos[i];
-                        if(sourceInfo.kind == "video" && sourceInfo.facing == "environment") {
-                                constraints.video.optional = [{sourceId: sourceInfo.id}]
-                        }
-                }
+                // for (var i = 0; i != sourceInfos.length; ++i) {
+                //         var sourceInfo = sourceInfos[i];
+                //         if(sourceInfo.kind == "video" && sourceInfo.facing == "environment") {
+                //                 constraints.video.optional = [{sourceId: sourceInfo.id}]
+                //         }
+                // }
+
 		navigator.getUserMedia(constraints, function success(stream) {
 			console.log('success', stream);
 			srcElement.src = window.URL.createObjectURL(stream);
@@ -173,7 +183,9 @@ THREEx.ArToolkitContext.prototype._initSourceWebcam = function(onReady) {
 			console.log("Can't access user media", error);
 			alert("Can't access user media :()");
 		});
-	})
+	}).catch(function(err) {
+		console.log(err.name + ": " + err.message);
+	});
 
 	return srcElement
 }
@@ -238,45 +250,51 @@ THREEx.ArToolkitContext.prototype._onSourceReady = function(onCompleted){
         	// init controller
                 var arController = new ARController(width, height, _this.cameraParameters);
                 _this.arController = arController
-                
-		// honor this.parameters.debug
-                if( _this.parameters.debug === true ){
-			arController.debugSetup();
-			arController.canvas.style.position = 'absolute'
-			arController.canvas.style.top = '0px'
-			arController.canvas.style.opacity = '0.6'
-			arController.canvas.style.pointerEvents = 'none'
-			arController.canvas.style.zIndex = '-1'
-		}
+		
+		_this._proxy = new ARProxy(arController, '../../../../../aframe/examples/data/camera_para.dat', function() { console.log("got new", arguments); });
+		// _this._proxy.processingDone = true;
+		_this._proxy.addEventListener('load', function(ev) {
+			console.log('ARController loaded', ev);
 
-		// setPatternDetectionMode
-		var detectionModes = {
-			'color'			: artoolkit.AR_TEMPLATE_MATCHING_COLOR,
-			'color_and_matrix'	: artoolkit.AR_TEMPLATE_MATCHING_COLOR_AND_MATRIX,
-			'mono'			: artoolkit.AR_TEMPLATE_MATCHING_MONO,
-			'mono_and_matrix'	: artoolkit.AR_TEMPLATE_MATCHING_MONO_AND_MATRIX,
-		}
-		var detectionMode = detectionModes[_this.parameters.detectionMode]
-		console.assert(detectionMode !== undefined)
-		arController.setPatternDetectionMode(detectionMode);
+			// honor this.parameters.debug
+	                if( _this.parameters.debug === true ){
+				arController.debugSetup();
+				arController.canvas.style.position = 'absolute'
+				arController.canvas.style.top = '0px'
+				arController.canvas.style.opacity = '0.6'
+				arController.canvas.style.pointerEvents = 'none'
+				arController.canvas.style.zIndex = '-1'
+			}
 
-		// setMatrixCodeType
-		var matrixCodeTypes = {
-			'3x3'		: artoolkit.AR_MATRIX_CODE_3x3,
-			'3x3_HAMMING63'	: artoolkit.AR_MATRIX_CODE_3x3_HAMMING63,
-			'3x3_PARITY65'	: artoolkit.AR_MATRIX_CODE_3x3_PARITY65,
-			'4x4'		: artoolkit.AR_MATRIX_CODE_4x4,
-			'4x4_BCH_13_9_3': artoolkit.AR_MATRIX_CODE_4x4_BCH_13_9_3,
-			'4x4_BCH_13_5_5': artoolkit.AR_MATRIX_CODE_4x4_BCH_13_5_5,
-		}
-		var matrixCodeType = matrixCodeTypes[_this.parameters.matrixCodeType]
-		console.assert(matrixCodeType !== undefined)
-		arController.setMatrixCodeType(matrixCodeType);
+			// setPatternDetectionMode
+			var detectionModes = {
+				'color'			: artoolkit.AR_TEMPLATE_MATCHING_COLOR,
+				'color_and_matrix'	: artoolkit.AR_TEMPLATE_MATCHING_COLOR_AND_MATRIX,
+				'mono'			: artoolkit.AR_TEMPLATE_MATCHING_MONO,
+				'mono_and_matrix'	: artoolkit.AR_TEMPLATE_MATCHING_MONO_AND_MATRIX,
+			}
+			var detectionMode = detectionModes[_this.parameters.detectionMode]
+			console.assert(detectionMode !== undefined)
+			arController.setPatternDetectionMode(detectionMode);
 
-		// console.warn('arController fully initialized')
+			// setMatrixCodeType
+			var matrixCodeTypes = {
+				'3x3'		: artoolkit.AR_MATRIX_CODE_3x3,
+				'3x3_HAMMING63'	: artoolkit.AR_MATRIX_CODE_3x3_HAMMING63,
+				'3x3_PARITY65'	: artoolkit.AR_MATRIX_CODE_3x3_PARITY65,
+				'4x4'		: artoolkit.AR_MATRIX_CODE_4x4,
+				'4x4_BCH_13_9_3': artoolkit.AR_MATRIX_CODE_4x4_BCH_13_9_3,
+				'4x4_BCH_13_5_5': artoolkit.AR_MATRIX_CODE_4x4_BCH_13_5_5,
+			}
+			var matrixCodeType = matrixCodeTypes[_this.parameters.matrixCodeType]
+			console.assert(matrixCodeType !== undefined)
+			arController.setMatrixCodeType(matrixCodeType);
 
-		// notify
-                onCompleted && onCompleted()                
+			// console.warn('arController fully initialized')
+
+			// notify
+	                onCompleted && onCompleted()                
+		})
         })		
 }
 
@@ -319,7 +337,8 @@ THREEx.ArToolkitContext.prototype.update = function(){
 	})
 
 	// process this frame
-	arController.process(this.srcElement)
+	// arController.process(this.srcElement)
+	this._proxy.process(this.srcElement)
 
 	// return true as we processed the frame
 	return true;

@@ -11,7 +11,7 @@
 
 <script src="../vendor/jsartoolkit5/js/artoolkit.proxy.js"></script>
 
-<body style='margin : 0px'><script>
+<body style='margin : 0px;overflow: hidden;'><script>
 	//////////////////////////////////////////////////////////////////////////////////
 	//		Init
 	//////////////////////////////////////////////////////////////////////////////////
@@ -51,12 +51,16 @@
 
 	// create arToolkitContext
 	var arToolkitContext = new THREEx.ArToolkitContext({
-		sourceType : 'image',
-		sourceUrl : '../../../aframe/examples/images/img.jpg',
+		// sourceType : 'image',
+		// sourceUrl : '../../../aframe/examples/images/img.jpg',
+		// sourceType : 'video',
+		// sourceUrl : '../../../aframe/examples/videos/headtracking.mp4',
+		sourceType : 'webcam',
+		// sourceUrl : '../../../aframe/examples/videos/headtracking.mp4',
 		cameraParametersUrl: '../../../aframe/examples/data/camera_para.dat',
 		detectionMode: 'mono'
 	})
-// var srcElement = THREEx.ArToolkitSource.initImage('../../../aframe/examples/images/img.jpg', onSourceReady)
+
 	// we init the source
 	arToolkitContext.initSource(function(){
 		// copy projection matrix to camera
@@ -64,11 +68,12 @@
 	        camera.projectionMatrix.fromArray(projectionMatrix);
 		// handle resize of renderer
 		onResize()
+		arToolkitContext._proxy.processingDone = true;
 	})
 	// handle resize
 	window.addEventListener('resize', onResize)	
 	function onResize(){
-// THREEx.ArToolkitSource.resize(srcElement)
+
 		// handle arToolkitContext resize
 		arToolkitContext.onResize()
 	
@@ -90,7 +95,8 @@
 	// init controls for camera
 	var markerControls = new THREEx.ArMarkerControls(arToolkitContext, camera, {
 		type : 'pattern',
-		patternUrl : '../../../aframe/examples/data/patt.hiro',
+		// patternUrl : '../../../aframe/examples/data/patt.hiro',
+		patternUrl : '../../../aframe/examples/data/patt.kanji',
 		// as we controls the camera 
 		changeMatrixMode: 'cameraTransformMatrix'
 	})

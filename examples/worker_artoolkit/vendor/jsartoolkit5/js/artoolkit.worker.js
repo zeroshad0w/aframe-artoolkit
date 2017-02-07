@@ -39,6 +39,7 @@ onmessage = function(ev) {
 	} else {
 
 		var arController = WorkerARControllers[ev.data.id];
+// console.log('method', ev.data.method, arController, ev.data.id, WorkerARControllers)
 		if (callbackMethods[ev.data.method]) {
 			ev.data.arguments.push(function() {
 				var args = Array.prototype.slice.call(arguments)

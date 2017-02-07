@@ -140,12 +140,12 @@
 
 		this.addEventListener('getMarker', function(ev) {
 			if (ev.data.type === artoolkit.BARCODE_MARKER) {
-				if (this.arController.threeBarcodeMarkers[ev.data.index]) {
-					this.arController.threeBarcodeMarkers[ev.data.index].keepVisible = true;
+				if (this.arController.barcodeMarkers[ev.data.index]) {
+					this.arController.barcodeMarkers[ev.data.index].keepVisible = true;
 				}
 			} else {
-				if (this.arController.threePatternMarkers[ev.data.index]) {
-					this.arController.threePatternMarkers[ev.data.index].keepVisible = true;
+				if (this.arController.patternMarkers[ev.data.index]) {
+					this.arController.patternMarkers[ev.data.index].keepVisible = true;
 				}
 			}
 			this.arController.dispatchEvent(ev);

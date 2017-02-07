@@ -73,17 +73,18 @@ THREEx.ArMarkerControls.prototype._postInit = function(){
 
 	// listen to the event 
 	arController.addEventListener('getMarker', function(event){
-
-		if( event.data.type === artoolkit.PATTERN_MARKER && _this.parameters.type === 'pattern' ){
-			if( _this.markerId === null )	return
-			if( event.data.marker.idPatt === _this.markerId ) onMarkerFound()
-		}else if( event.data.type === artoolkit.BARCODE_MARKER && _this.parameters.type === 'barcode' ){
-			// console.log('BARCODE_MARKER idMatrix', event.data.marker.idMatrix, _this.markerId )
-			if( _this.markerId === null )	return
-			if( event.data.marker.idMatrix === _this.markerId )  onMarkerFound()
-		}else if( event.data.type === artoolkit.UNKNOWN_MARKER && _this.parameters.type === 'unknown'){
-			onMarkerFound()
-		}
+		onMarkerFound()
+// debugger;
+		// if( event.data.type === artoolkit.PATTERN_MARKER && _this.parameters.type === 'pattern' ){
+		// 	if( _this.markerId === null )	return
+		// 	if( event.data.marker.idPatt === _this.markerId ) onMarkerFound()
+		// }else if( event.data.type === artoolkit.BARCODE_MARKER && _this.parameters.type === 'barcode' ){
+		// 	// console.log('BARCODE_MARKER idMatrix', event.data.marker.idMatrix, _this.markerId )
+		// 	if( _this.markerId === null )	return
+		// 	if( event.data.marker.idMatrix === _this.markerId )  onMarkerFound()
+		// }else if( event.data.type === artoolkit.UNKNOWN_MARKER && _this.parameters.type === 'unknown'){
+		// 	onMarkerFound()
+		// }
 
 		function onMarkerFound(){
 			// data.matrix is the model view matrix

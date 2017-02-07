@@ -1,3 +1,3 @@
-- so make jsartoolkit in worker
-- and normal threex to use worker or not
-- put all kind of marker in the barcode/pattern/nft/unknown
+- how come you init twice the artoolkitcontrollers
+  - waste memory
+- how come the worker is running detectNFT - see cpu profile
