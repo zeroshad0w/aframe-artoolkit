@@ -56,6 +56,7 @@
 		cameraParametersUrl: '../../../aframe/examples/data/camera_para.dat',
 		detectionMode: 'mono'
 	})
+// var srcElement = THREEx.ArToolkitSource.initImage('../../../aframe/examples/images/img.jpg', onSourceReady)
 	// we init the source
 	arToolkitContext.initSource(function(){
 		// copy projection matrix to camera
@@ -67,6 +68,7 @@
 	// handle resize
 	window.addEventListener('resize', onResize)	
 	function onResize(){
+// THREEx.ArToolkitSource.resize(srcElement)
 		// handle arToolkitContext resize
 		arToolkitContext.onResize()
 	
