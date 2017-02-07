@@ -20,6 +20,7 @@
 		alpha: true
 	});
 	renderer.setClearColor(new THREE.Color('lightgrey'), 0)
+	// renderer.setSize( 1280/2, 960/2 );
 	renderer.setSize( 640, 480 );
 	renderer.domElement.style.position = 'absolute'
 	renderer.domElement.style.top = '0px'
@@ -47,14 +48,16 @@
 	var camera = new THREE.Camera();
 	scene.add(camera);
 
-	// create arToolkitContext
+	// create atToolkitContext
 	var arToolkitContext = new THREEx.ArToolkitContext({
 		sourceType : 'webcam',
 
-imageWidth: 80*3,
-imageHeight: 60*3,
+		imageWidth: 80*3,
+		imageHeight: 60*3,
+
 		// sourceType : 'image',
-		sourceUrl : '../aframe/examples/images/img.jpg',
+		// sourceUrl : '../aframe/examples/images/img.jpg',
+
 		cameraParametersUrl: '../aframe/examples/data/camera_para.dat',
 		detectionMode: 'mono'
 	})
@@ -86,13 +89,11 @@ imageHeight: 60*3,
 		arToolkitContext.update()
 	})
 
-
-	// init controls for camera
-	var markerControls = new THREEx.ArMarkerControls(arToolkitContext, camera, {
+	var markerRoot = new THREE.Group
+	scene.add(markerRoot)
+	var artoolkitMarker = new THREEx.ArMarkerControls(arToolkitContext, markerRoot, {
 		type : 'pattern',
-		patternUrl : '../aframe/examples/data/patt.hiro',
-		// as we controls the camera 
-		changeMatrixMode: 'cameraTransformMatrix'
+		patternUrl : '../aframe/examples/data/patt.hiro'
 	})
 
 
@@ -109,13 +110,13 @@ imageHeight: 60*3,
 	}); 
 	var mesh	= new THREE.Mesh( geometry, material );
 	mesh.position.z	= geometry.parameters.height/2
-	scene.add( mesh );
+	markerRoot.add( mesh );
 	
 	var geometry	= new THREE.TorusKnotGeometry(0.3,0.1,32,32);
 	var material	= new THREE.MeshNormalMaterial(); 
 	var mesh	= new THREE.Mesh( geometry, material );
 	mesh.position.z	= 0.5
-	scene.add( mesh );
+	markerRoot.add( mesh );
 	
 	onRenderFcts.push(function(){
 		mesh.rotation.x += 0.1

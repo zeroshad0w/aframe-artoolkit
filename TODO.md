@@ -1,6 +1,12 @@
-- port webcam to new standard - https://developer.mozilla.org/en-US/docs/Web/API/MediaDevices/enumerateDevices
+- refactor source
+  - split context in context/source
+  - threex.artoolkitcontext2.js to change and have its own artoolkitsource.html
+- see about webworkers
+
+- DONE port webcam to new standard - https://developer.mozilla.org/en-US/docs/Web/API/MediaDevices/enumerateDevices
 
 - in ArToolkitContext rename parameters.imageWidth in parameters.sourceWidth
+
 
 - add the webworkers with this release ?
 - add the nft ?
