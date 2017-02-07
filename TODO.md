@@ -1,11 +1,6 @@
 - port webcam to new standard - https://developer.mozilla.org/en-US/docs/Web/API/MediaDevices/enumerateDevices
+
 - in ArToolkitContext rename parameters.imageWidth in parameters.sourceWidth
-- finish the resize
-  - remove the 640x480 of aframe demo
-
-- how to detect if there is a new image in source video
-  - it isnt that simple
-
 
 - add the webworkers with this release ?
 - add the nft ?
